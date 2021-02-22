@@ -1,5 +1,8 @@
 ---
 title: "Price per m2 analysis"
+output:
+  html_document:
+    css: "style.css"
 editor_options:
   chunk_output_type: console
 ---

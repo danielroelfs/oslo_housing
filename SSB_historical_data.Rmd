@@ -1,5 +1,8 @@
 ---
-title: "SSB API"
+title: "SSB Historical Data"
+output:
+  html_document:
+    css: "style.css"
 editor_options:
   chunk_output_type: console
 ---
@@ -7,22 +10,6 @@ editor_options:
 ```{r include=FALSE}
 knitr::opts_chunk$set(fig.retina = 2, echo = FALSE, message = FALSE, warning = FALSE, fig.align = "center")
 ```
-
-```{css}
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
-h1.title {
-  font-family: 'Roboto Condensed', serif;
-  font-weight: 700;
-  font-size: 42pt;
-}
-
-body{
-  font-family: 'Roboto Condensed', serif;
-  font-size: 12pt;
-  background-color: #F0F0F0;
-}
-```
-
 
 ```{r setup, message=FALSE, warning=FALSE, cache=FALSE, echo=FALSE}
 library(tidyverse)

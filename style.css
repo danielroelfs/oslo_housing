@@ -1,0 +1,108 @@
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
+
+/* Variables */
+:root {
+  --main-font: 'Roboto Condensed', serif;
+  --main-color: #333;
+  --background: #F0F0F0;
+  --link-color: #008FD5;
+  --index-size: 16pt;
+}
+
+/* Headers */
+h1, h2, h3, h4, h5 {
+  font-family: var(--main-font);
+  font-weight: 500;
+  color: var(--main-color);
+  line-height: 1.1;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+h1.title {
+  font-weight: 700;
+  font-size: 42pt;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+h1 {
+  font-size: 34px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+
+/* Body */
+body {
+  font-family: var(--main-font);
+  font-size: 12pt;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  line-height: 1.42857143;
+  background-color: var(--background);
+  display: block;
+}
+
+/* Links */
+a {
+  color: var(--link-color);
+}
+
+a:hover {
+  transition: 0.5s ease;
+  filter: brightness(80%);
+}
+
+/* Misc */
+.index-container {
+  box-sizing: border-box;
+  max-width: 940px;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.index-size {
+  font-size: var(--index-size);
+}
+
+.footer {
+  position: absolute;
+  color: var(--background);
+  background-color: var(--link-color);
+  font-size: 10pt;
+  left: 0;
+  bottom: 0;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 100%;
+  overflow: hidden;
+  text-align: center;
+}
+
+table {
+  min-width: 80%;
+  margin: auto;
+  font-size: 12pt;
+  padding-top: 2em;
+  padding-bottom: 1em;
+}
+
+td { 
+  padding: 10px;
+}
