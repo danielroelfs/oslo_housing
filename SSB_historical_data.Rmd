@@ -1,0 +1,278 @@
+---
+title: "SSB API"
+editor_options:
+  chunk_output_type: console
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(fig.retina = 2, echo = FALSE, message = FALSE, warning = FALSE, fig.align = "center")
+```
+
+```{css}
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
+h1.title {
+  font-family: 'Roboto Condensed', serif;
+  font-weight: 700;
+  font-size: 42pt;
+}
+
+body{
+  font-family: 'Roboto Condensed', serif;
+  font-size: 12pt;
+  background-color: #F0F0F0;
+}
+```
+
+
+```{r setup, message=FALSE, warning=FALSE, cache=FALSE, echo=FALSE}
+library(tidyverse)
+
+theme_set(ggthemes::theme_fivethirtyeight())
+```
+
+```{r price-per-transfer-county}
+data <- read_csv("https://data.ssb.no/api/v0/dataset/74676.csv?lang=en", locale = readr::locale(encoding = "latin1")) %>% 
+  janitor::clean_names() %>%
+  rename(transfers = x06726_transfers_of_dwelling_properties_with_building_free_market_sale_by_region_year_and_contents)
+
+data %>% 
+  filter(str_detect(region, "Oslo|Akershus|Hordaland|Trondelag|Troms|Buskerud|Telemark|Rogaland|Finnmark")) %>% 
+  mutate(area = str_extract(region, "[A-Z][a-z|å|æ|ø]+")) %>% 
+  drop_na() %>% 
+  pivot_wider(names_from = contents, values_from = transfers) %>% 
+  janitor::clean_names() %>% 
+  mutate(avg_price = total_purchase_prise_1_000_nok / transfers_number * 1000,
+         min_price = min(avg_price, na.rm = TRUE)) %>% 
+  ggplot(aes(x = year, y = avg_price, color = area)) +
+  geom_line() + 
+  geom_smooth(linetype = "dashed") +
+  labs(title = "Average purchase price per transfer (county)",
+       color = NULL) +
+  scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " "),
+                     limits = c(0,8e6)) +
+  theme(plot.title.position = "plot")
+```
+
+```{r price-per-transfer-municipality}
+data <- read_csv("https://data.ssb.no/api/v0/dataset/65604.csv?lang=en", locale = readr::locale(encoding = "latin1"), na = "..") %>% 
+  janitor::clean_names() %>% 
+  rename(transfers = x06726_transfers_of_dwelling_properties_with_building_free_market_sale_by_region_year_and_contents) 
+
+data_housing_prices <- data
+
+data_avg_transfer_price <- data_housing_prices %>% 
+  mutate(city = str_extract(region, "[A-Z][a-z|å|æ|ø]+")) %>% 
+  drop_na() %>% 
+  pivot_wider(names_from = contents, values_from = transfers) %>% 
+  janitor::clean_names() %>% 
+  select(-average_purchase_price_per_transfer_1_000_nok) %>% 
+  mutate(avg_price = total_purchase_prise_1_000_nok / transfers_number * 1000)
+
+data %>% 
+  filter(str_detect(region,"Oslo|Trondheim|Bergen|Ålesund|Stavanger|Tromsø|Bodø")) %>% 
+  mutate(city = str_extract(region, "[A-Z][a-z|å|æ|ø]+")) %>% 
+  drop_na() %>% 
+  pivot_wider(names_from = contents, values_from = transfers) %>% 
+  janitor::clean_names() %>% 
+  mutate(avg_price = total_purchase_prise_1_000_nok / transfers_number * 1000,
+         min_price = min(avg_price, na.rm = TRUE)) %>% 
+  ggplot(aes(x = year, y = avg_price, color = city)) +
+  geom_line() + 
+  geom_smooth(linetype = "dashed") +
+  labs(title = "Average purchase price per transfer (municipality)",
+       color = NULL) +
+  scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " ")) +
+  theme(plot.title.position = "plot")
+```
+
+```{r price-per-kvm-municipality}
+data <- read_csv("https://data.ssb.no/api/v0/dataset/185487.csv?lang=en", locale = readr::locale(encoding = "latin1")) %>% 
+  janitor::clean_names() %>% 
+  rename(price_kvm = x05963_freeholder_by_region_type_of_building_quarter_and_contents) %>% 
+  mutate(price_kvm = parse_number(price_kvm)) %>% 
+  drop_na()
+
+data %>% 
+  filter(str_detect(contents, "Average price"),
+         str_detect(region,"Oslo|Trondheim|Bergen|Ålesund|Stavanger|Tromsø|Bodø")) %>% 
+  mutate(city = str_extract(region, "[A-Z|Å|Æ|Ø][a-z|å|æ|ø]+"),
+         quarter = str_replace(quarter,"K","Q"),
+         date = zoo::as.yearqtr(quarter)) %>% 
+  ggplot(aes(x = date, y = price_kvm, color = city)) +
+  #geom_line(alpha = 0.2) + 
+  geom_smooth(linetype = "dashed") +
+  labs(title = "Average purchase price per square meter (municipality)",
+       color = NULL) +
+  scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " ")) +
+  theme(plot.title.position = "plot")
+```
+
+```{r income-municipality}
+data <- read_csv("https://data.ssb.no/api/v0/dataset/49678.csv?lang=en", locale = readr::locale(encoding = "latin1")) %>% 
+  janitor::clean_names() %>% 
+  rename(median_income = x06944_households_income_by_region_type_of_household_year_and_contents) %>% 
+  mutate(median_income = parse_number(median_income)) %>% 
+  drop_na()
+
+data_income_municipality <- data
+
+data %>% 
+  filter(str_detect(contents, "Income after taxes"),
+         str_detect(type_of_household, "Living alone"),
+         str_detect(region,"Oslo|Trondheim|Bergen|Ålesund|Stavanger|Tromsø|Bodø")) %>% 
+  mutate(city = str_extract(region, "[A-Z|Å|Æ|Ø][a-z|å|æ|ø]+")) %>% 
+  ggplot(aes(x = year, y = median_income, color = city, fill = city)) +
+  #geom_line(size = 2) + 
+  geom_smooth() +
+  labs(title = "Median income for people living alone (after tax)",
+       color = NULL,
+       fill = NULL) +
+  scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " ")) +
+  theme(plot.title.position = "plot")
+```
+
+```{r income-brackets}
+data <- read_csv("https://data.ssb.no/api/v0/dataset/56957.csv?lang=en", locale = readr::locale(encoding = "latin1")) %>% 
+  janitor::clean_names() %>% 
+  rename(values = x07182_households_by_region_contents_and_year) %>% 
+  mutate(values = parse_number(values))
+
+data %>% 
+  mutate(city = str_extract(region, "[A-Z|Å|Æ|Ø][a-z|å|æ|ø]+")) %>% 
+  filter(str_detect(city,"Oslo"),
+         str_detect(contents, "Number of households", negate = TRUE)) %>% 
+  rename(bracket = contents) %>% 
+  ggplot(aes(x = year, y = values / 100, fill = bracket)) +
+  geom_col(position = position_dodge()) +
+  labs(title = "Income distribution in Oslo",
+       fill = NULL) +
+  scale_y_continuous(labels = scales::label_percent()) +
+  theme(plot.title.position = "plot")
+```
+
+```{r plot-income-vs-housing-prices}
+data_gross_income <- read_csv("https://data.ssb.no/api/v0/dataset/49607.csv?lang=en", locale = readr::locale(encoding = "latin1")) %>% 
+  janitor::clean_names() %>% 
+  rename(values = x05854_main_entries_from_the_tax_assessment_for_residents_17_years_and_older_nok_by_region_age_year_and_contents) %>% 
+  filter(str_detect(region,"Oslo"),
+         str_detect(contents, "Median gross income")) %>% 
+  rename(gross_income = values)
+
+data <- data_housing_prices %>% 
+  filter(str_detect(region, "Oslo")) %>% 
+  drop_na() %>% 
+  pivot_wider(names_from = contents, values_from = transfers) %>% 
+  janitor::clean_names() %>% 
+  mutate(avg_price = total_purchase_prise_1_000_nok / transfers_number * 1000) %>% 
+  inner_join(data_gross_income, by = c("region","year")) %>% 
+  filter(str_detect(contents, "Median gross income"))
+
+data %>% 
+  mutate(gross_income = gross_income * 10) %>% 
+  pivot_longer(cols = c(avg_price, gross_income),
+               names_to = "variable", values_to = "value") %>% 
+  mutate(variable = case_when(
+    str_detect(variable, "price") ~ "Average housing price in Oslo",
+    str_detect(variable, "income") ~ "Gross median income in Oslo (multiplied by 10)"
+  )) %>% 
+  ggplot(aes(x = year,  y = value, color = variable)) + 
+  geom_vline(xintercept = 2014, alpha = 0.25, linetype = "dashed") + 
+  geom_line(size = 2, lineend = "round") + 
+  labs(title = "Housing prices in Oslo rise faster than gross income",
+       caption = "Data from SSB",
+       color = NULL) +
+  scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " "),
+                     limits = c(NA,8e6), position = "right") +
+  theme(plot.title.position = "plot",
+        plot.caption = element_text(face = "italic"),
+        legend.direction = "vertical")
+```
+
+
+```{r correlation-bankruptcies}
+data_sales <- read_csv("https://data.ssb.no/api/v0/dataset/65604.csv?lang=en", locale = readr::locale(encoding = "latin1"), na = "..") %>% 
+  janitor::clean_names() %>% 
+  rename(transfers = x06726_transfers_of_dwelling_properties_with_building_free_market_sale_by_region_year_and_contents) %>%
+  filter(str_detect(region,"Oslo")) %>% 
+  mutate(city = str_extract(region, "[A-Z][a-z|å|æ|ø]+")) %>% 
+  drop_na() %>% 
+  pivot_wider(names_from = contents, values_from = transfers) %>% 
+  janitor::clean_names() %>% 
+  mutate(avg_transfer_price = total_purchase_prise_1_000_nok / transfers_number * 1000)
+
+data_bankruptcies <- read_csv("https://data.ssb.no/api/v0/dataset/95265.csv?lang=en", locale = readr::locale(encoding = "latin1"), na = "..") %>% 
+  janitor::clean_names() %>% 
+  rename(number_of_bankruptcies = x07218_bankruptcies_by_month_and_contents) %>% 
+  mutate(date = as.Date(month, format = "%YM%M"),
+         date = lubridate::floor_date(date, "month"),
+         year = lubridate::year(date))
+
+data_bankruptcies_year <- data_bankruptcies %>% 
+  group_by(year, contents) %>% 
+  summarise(number_of_bankruptcies = sum(number_of_bankruptcies))
+
+data <- data_sales %>% 
+  inner_join(data_bankruptcies_year, by = "year")
+
+# Calculate correlation
+data %>% 
+  nest(data = -contents) %>%
+  mutate(test = map(data, ~ cor.test(.x$transfers_number, .x$number_of_bankruptcies, method = "spearman")),
+         tidied = map(test, broom::tidy)) %>% 
+  unnest(tidied) %>% 
+  janitor::clean_names() %>% 
+  mutate(p_fdr = p.adjust(p_value, method = "fdr")) %>% 
+  select(-c(data,test)) %>% 
+  knitr::kable()
+
+data %>% 
+  filter(str_detect(contents, "real estate")) %>% 
+  select(year, transfers_number, number_of_bankruptcies) %>% 
+  pivot_longer(cols = c(transfers_number, number_of_bankruptcies),
+               names_to = "variable", values_to = "number") %>% 
+  ggplot(aes(x = year, y = number, color = variable)) + 
+  geom_line()
+```
+
+```{r inflation}
+data_inflation <- read_csv("https://data.ssb.no/api/v0/dataset/45590.csv?lang=en", locale = readr::locale(encoding = "latin1"), na = ".") %>% 
+  janitor::clean_names() %>% 
+  rename(cpi = x06444_cpi_and_cpi_ate_seasonal_adjusted_2015_100_by_index_month_and_contents) %>% 
+  mutate(year = lubridate::year(as.Date(month, format = "%YM%M")),
+         inflation = cpi / lag(cpi),
+         inflation = ifelse(is.na(inflation), 1, inflation))
+
+data_inflation <- data_inflation %>% 
+  filter(str_detect(index, "TOTAL CPI seasonal adjusted all item index")) %>% 
+  group_by(year) %>% 
+  summarise(inflation = mean(inflation),
+            n = n()) %>% 
+  inner_join(data_gross_income, by = "year") %>% 
+  inner_join(data_avg_transfer_price, by = c("year","region")) %>% 
+  mutate(inflation_cum = cumsum(inflation),
+         gross_income_infl_adj = gross_income / inflation,
+         avg_price_infl_adj = avg_price / inflation)
+
+data_inflation %>% 
+  mutate(gross_income_infl_adj = gross_income_infl_adj * 10) %>% 
+  pivot_longer(cols = c(gross_income_infl_adj, avg_price_infl_adj),
+               names_to = "variable", values_to = "value") %>% 
+  mutate(variable = case_when(
+    str_detect(variable, "price") ~ "Average housing price in Oslo",
+    str_detect(variable, "income") ~ "Gross median income in Oslo (multiplied by 10)"
+  )) %>% 
+  ggplot(aes(x = year,  y = value, color = variable)) + 
+  geom_vline(xintercept = 2014, alpha = 0.25, linetype = "dashed") + 
+  geom_line(size = 2, lineend = "round") + 
+  labs(title = "Housing prices in Oslo rise faster than gross income",
+       caption = "Data from SSB",
+       color = NULL) +
+  scale_y_continuous(trans = "log10", labels = scales::label_number(suffix = " kr", big.mark = " "),
+                     position = "right") +
+  theme(plot.title.position = "plot",
+        plot.caption = element_text(face = "italic"),
+        legend.direction = "vertical")
+```
+
+
+

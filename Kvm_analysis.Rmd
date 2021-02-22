@@ -1,0 +1,156 @@
+---
+title: "Price per m2 analysis"
+editor_options:
+  chunk_output_type: console
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(fig.retina = 2, echo = FALSE, message = FALSE, warning = FALSE, fig.align = "center")
+```
+
+```{r setup, message=FALSE, warning=FALSE, cache=FALSE, echo=FALSE}
+library(tidyverse)
+
+theme_set(ggthemes::theme_fivethirtyeight())
+```
+
+```{r load-data}
+data <- read_csv(glue::glue("files/housing_listings_{Sys.Date()}.csv"), col_types = cols()) %>% 
+  mutate(location = str_to_title(location),
+         location = str_remove_all(location,"#"),
+         title = str_to_sentence(title)) %>% 
+  filter(price > 1.5e6) %>% 
+  glimpse()
+```
+
+```{r calc-price-per-kvm}
+data <- data %>% 
+  mutate(price_per_m2 = price / bruksareal,
+         location_parsed = case_when(
+           str_detect(location, "Frogner") ~ "Frogner",
+           str_detect(location, "Marienlyst") ~ "Marienlyst",
+           str_detect(location, "Majorstu[en|a]") ~ "Majorstuen",
+           str_detect(location, "Fagerborg") ~ "Faberborg",
+           str_detect(location, "Adamstuen") ~ "Adamstuen",
+           str_detect(location, "Ullevål") ~ "Ullevål",
+           str_detect(location, "Grünerløkka") ~ "Grünerløkka",
+           str_detect(location, "Holmenkollen") ~ "Holmenkollen",
+           str_detect(location, "Grefsen") ~ "Grefsen",
+           str_detect(location, "Gamlebyen") ~ "Gamlebyen",
+           str_detect(location, "Nydalen") ~ "Nydalen",
+           str_detect(location, "Torshov") ~ "Torshov",
+           str_detect(location, "Tøyen") ~ "Tøyen",
+           str_detect(location, "Sagene") ~ "Sagene",
+           str_detect(location, "Grønland") ~ "Grønland",
+           str_detect(location, "Tjuvholmen") ~ "Tjuvholmen",
+           str_detect(location, "Vika") ~ "Vika",
+           str_detect(location, "Skøyen") ~ "Skøyen",
+           str_detect(location, "Stovner") ~ "Stovner",
+           str_detect(location, "Borgen") ~ "Borgen",
+           TRUE ~ "Other"
+         )) %>% 
+  filter(price_per_m2 > 1000) %>% 
+  group_by(location_parsed) %>% 
+  mutate(n_label = glue::glue("n = {n()}"))
+```
+
+```{r}
+data %>% 
+  filter(location_parsed != "Other") %>% 
+  select(loc = location_parsed, price, price_per_m2, bruksareal) %>% 
+  group_by(loc) %>% 
+  summarise(mean_price = mean(price, na.rm = TRUE),
+            median_price = median(price, na.rm = TRUE),
+            mean_price_kvm = mean(price_per_m2, na.rm = TRUE),
+            median_price_kvm = median(price_per_m2, na.rm = TRUE)) %>% 
+  arrange(mean_price)
+```
+
+
+```{r plot-kvm-area}
+data %>% 
+  ggplot(aes(x = reorder(location_parsed,price), y = price)) + 
+  geom_violin(fill = "grey80") +
+  geom_boxplot(width = 0.1) + 
+  geom_text(data = . %>% slice(1), aes(label = n_label, group = 1), y = 2e5, 
+            hjust = 0, vjust = 0, angle = 90) +
+  labs(title = "Pris (totalt) i forskjellige områder") +
+  scale_x_discrete() + 
+  scale_y_continuous(trans = "log10", labels = scales::label_number(suffix = " kr", big.mark = " ")) +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1),
+        plot.title.position = "plot")
+```
+
+```{r plot-kvm-areas}
+data %>% 
+  ggplot(aes(x = reorder(location_parsed,price_per_m2), y = price_per_m2)) + 
+  geom_violin() +
+  geom_boxplot(width = 0.1) + 
+  geom_text(data = . %>% slice(1), aes(label = n_label, group = 1), y = 2e5, 
+            hjust = 0, vjust = 0, angle = 90) +
+  labs(title = "Pris per kvm i forskjellige byområder") +
+  scale_x_discrete() + 
+  scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " ")) +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1),
+        plot.title.position = "plot")
+```
+
+```{r plot-pris-kvm}
+data %>% 
+  filter(location_parsed %in% c("Fagerborg","Majorstuen","Frogner","Grünerløkka","Holmenkollen",
+                                "Nydalen","Sagene","Torshov","Tøyen","Vika"),
+         price < 20e6) %>% 
+  ggplot(aes(x = bruksareal, y = price, color = location_parsed)) + 
+  geom_abline(intercept = -1e7, slope = 1e7) +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(size = 2, alpha = 0.8) +
+  labs(title = "Pris (totalt) per bruksareal",
+       x = "Bruksareal (kvm)",
+       y = "Pris (totalt)",
+       color = NULL) +
+  scale_x_continuous(trans = "log10") + 
+  scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " ")) +
+  theme(plot.title.position = "plot",
+        axis.title = element_text())
+```
+
+```{r plot-prisperkvm-kvm}
+data %>% 
+  filter(location_parsed %in% c("Fagerborg","Majorstuen","Frogner","Grünerløkka","Holmenkollen",
+                                "Nydalen","Sagene","Torshov","Tøyen","Vika"),
+         price < 20e6) %>% 
+  ggplot(aes(x = bruksareal, y = price_per_m2, color = location_parsed)) + 
+  geom_smooth(aes(x = bruksareal, y = price_per_m2), inherit.aes = FALSE,
+              method = "lm", color = "black", se = FALSE, linetype = "dashed") +
+  geom_smooth(method = "lm", se = FALSE) +
+  geom_point(size = 2, alpha = 0.8) +
+  labs(title = "Pris per kvm per bruksareal",
+       x = "Bruksareal (kvm)",
+       y = "Pris per kvm",
+       color = NULL) +
+  scale_x_continuous(trans = "log10") + 
+  scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " ")) +
+  theme(plot.title.position = "plot",
+        axis.title = element_text())
+```
+
+```{r plot-prisperkvm-pris}
+data %>% 
+  filter(location_parsed %in% c("Fagerborg","Majorstuen","Frogner","Grünerløkka","Holmenkollen",
+                                "Nydalen","Sagene","Torshov","Tøyen","Vika"),
+         price < 20e6) %>% 
+  ggplot(aes(x = price_per_m2, y = price, color = location_parsed, fill = location_parsed)) + 
+  geom_smooth(aes(x = price_per_m2, y = price), inherit.aes = FALSE,
+              method = "lm", color = "black", se = FALSE, linetype = "dashed") +
+  geom_smooth(method = "lm", se = TRUE, alpha = 0.1) +
+  geom_point(size = 2, alpha = 0.8) +
+  labs(title = "Pris per kvm per bruksareal",
+       x = "Pris per kvm",
+       y = "Pris (totalt)",
+       color = NULL) +
+  scale_x_continuous(trans = "log10", labels = scales::label_number(suffix = " kr", big.mark = " ")) + 
+  scale_y_continuous(trans = "log10", labels = scales::label_number(suffix = " kr", big.mark = " ")) +
+  theme(plot.title.position = "plot",
+        axis.title = element_text())
+```
+
