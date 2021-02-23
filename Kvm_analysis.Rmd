@@ -8,7 +8,8 @@ editor_options:
 ---
 
 ```{r include=FALSE}
-knitr::opts_chunk$set(fig.retina = 2, echo = FALSE, message = FALSE, warning = FALSE, fig.align = "center")
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, 
+                      fig.width = 9, fig.height = 6, fig.align = "center")
 ```
 
 ```{r setup, message=FALSE, warning=FALSE, cache=FALSE, echo=FALSE}
@@ -57,7 +58,7 @@ data <- data %>%
   mutate(n_label = glue::glue("n = {n()}"))
 ```
 
-```{r}
+```{r show-means}
 data %>% 
   filter(location_parsed != "Other") %>% 
   select(loc = location_parsed, price, price_per_m2, bruksareal) %>% 
@@ -150,7 +151,8 @@ data %>%
   labs(title = "Pris per kvm per bruksareal",
        x = "Pris per kvm",
        y = "Pris (totalt)",
-       color = NULL) +
+       color = NULL,
+       fill = NULL) +
   scale_x_continuous(trans = "log10", labels = scales::label_number(suffix = " kr", big.mark = " ")) + 
   scale_y_continuous(trans = "log10", labels = scales::label_number(suffix = " kr", big.mark = " ")) +
   theme(plot.title.position = "plot",

@@ -239,26 +239,6 @@ data_inflation <- data_inflation %>%
   mutate(inflation_cum = cumsum(inflation),
          gross_income_infl_adj = gross_income / inflation,
          avg_price_infl_adj = avg_price / inflation)
-
-data_inflation %>% 
-  mutate(gross_income_infl_adj = gross_income_infl_adj * 10) %>% 
-  pivot_longer(cols = c(gross_income_infl_adj, avg_price_infl_adj),
-               names_to = "variable", values_to = "value") %>% 
-  mutate(variable = case_when(
-    str_detect(variable, "price") ~ "Average housing price in Oslo",
-    str_detect(variable, "income") ~ "Gross median income in Oslo (multiplied by 10)"
-  )) %>% 
-  ggplot(aes(x = year,  y = value, color = variable)) + 
-  geom_vline(xintercept = 2014, alpha = 0.25, linetype = "dashed") + 
-  geom_line(size = 2, lineend = "round") + 
-  labs(title = "Housing prices in Oslo rise faster than gross income",
-       caption = "Data from SSB",
-       color = NULL) +
-  scale_y_continuous(trans = "log10", labels = scales::label_number(suffix = " kr", big.mark = " "),
-                     position = "right") +
-  theme(plot.title.position = "plot",
-        plot.caption = element_text(face = "italic"),
-        legend.direction = "vertical")
 ```
 
 

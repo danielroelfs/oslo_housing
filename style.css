@@ -103,6 +103,12 @@ table {
   padding-bottom: 1em;
 }
 
+th {
+  text-align: left;
+  padding-top: 10px;
+  padding-left: 10px;
+}
+
 td { 
   padding: 10px;
 }
