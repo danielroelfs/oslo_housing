@@ -3,6 +3,8 @@ title: "Price per m2 analysis"
 output:
   html_document:
     css: "style.css"
+    includes:
+      after_body: footer.html
 editor_options:
   chunk_output_type: console
 ---
@@ -24,6 +26,7 @@ data <- read_csv(glue::glue("files/housing_listings_{Sys.Date()}.csv"), col_type
          location = str_remove_all(location,"#"),
          title = str_to_sentence(title)) %>% 
   filter(price > 1.5e6) %>% 
+  select(id, everything()) %>% 
   glimpse()
 ```
 
@@ -55,7 +58,8 @@ data <- data %>%
          )) %>% 
   filter(price_per_m2 > 1000) %>% 
   group_by(location_parsed) %>% 
-  mutate(n_label = glue::glue("n = {n()}"))
+  mutate(n_label = glue::glue("n = {n()}")) %>% 
+  ungroup()
 ```
 
 ```{r show-means}
@@ -94,7 +98,7 @@ data %>%
             hjust = 0, vjust = 0, angle = 90) +
   labs(title = "Pris per kvm i forskjellige byområder") +
   scale_x_discrete() + 
-  scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " ")) +
+  scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " "), limits = c(NA, 2.2e5)) +
   theme(axis.text.x = element_text(angle = 30, hjust = 1),
         plot.title.position = "plot")
 ```

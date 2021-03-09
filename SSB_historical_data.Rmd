@@ -3,6 +3,8 @@ title: "SSB Historical Data"
 output:
   html_document:
     css: "style.css"
+    includes:
+      after_body: footer.html
 editor_options:
   chunk_output_type: console
 ---
@@ -218,7 +220,7 @@ data %>%
   pivot_longer(cols = c(transfers_number, number_of_bankruptcies),
                names_to = "variable", values_to = "number") %>% 
   ggplot(aes(x = year, y = number, color = variable)) + 
-  geom_line()
+  geom_line(size = 1.25)
 ```
 
 ```{r inflation}

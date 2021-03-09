@@ -1,0 +1,39 @@
+---
+title: "Can Norwegians afford a house?"
+output:
+  html_document:
+    css: "style.css"
+editor_options:
+  chunk_output_type: console
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(fig.retina = 2, echo = FALSE, message = FALSE, warning = FALSE, fig.align = "center")
+```
+
+```{r setup, message=FALSE, warning=FALSE, cache=FALSE, echo=FALSE}
+library(tidyverse)
+
+theme_set(ggthemes::theme_fivethirtyeight())
+```
+
+```{r load-salary-data}
+salary_data <- read_csv2("files/Manedslonn.csv", locale = readr::locale(encoding = "latin1"), na = ":", skip = 2) %>% 
+  janitor::clean_names() %>% 
+  mutate(across(starts_with("x"), parse_number))
+```
+
+```{r}
+salary_data %>% 
+  filter(str_detect(contents,"Basic monthly"),
+         sex == "Both sexes",
+         measuring_method == "Median",
+         occupation == "Professionals") %>%
+  pivot_longer(cols = starts_with("x"), names_to = "year", values_to = "monthly_salary") %>% 
+  mutate(year = parse_number(year)) %>%
+  filter(monthly_salary > 6e4) %>% 
+  ggplot(aes(x = year, y = monthly_salary, color = industry_sic2007)) + 
+  geom_line()
+```
+
+

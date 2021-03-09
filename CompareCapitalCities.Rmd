@@ -1,0 +1,257 @@
+---
+title: "Compare housing prices in capital cities"
+output:
+  html_document:
+    css: "style.css"
+    includes:
+      after_body: footer.html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(fig.retina = 2, echo = FALSE, message = FALSE, warning = FALSE, fig.align = "center")
+```
+
+```{r setup, message=FALSE, warning=FALSE, cache=FALSE, echo=FALSE}
+library(tidyverse)
+
+theme_set(ggthemes::theme_fivethirtyeight())
+```
+
+```{r load-norway}
+no_data <- read_csv("https://data.ssb.no/api/v0/dataset/65604.csv?lang=en", locale = readr::locale(encoding = "latin1"), na = "..") %>% 
+  janitor::clean_names() %>% 
+  rename(transfers = x06726_transfers_of_dwelling_properties_with_building_free_market_sale_by_region_year_and_contents) %>% 
+  rename(municipality = region) %>% 
+  mutate(region = str_extract(municipality, "[A-Z|Å|Æ|Ø][a-z|å|æ|ø]+")) %>% 
+  drop_na() %>% 
+  pivot_wider(names_from = contents, values_from = transfers) %>% 
+  janitor::clean_names() %>% 
+  select(-average_purchase_price_per_transfer_1_000_nok) %>% 
+  mutate(average_price = total_purchase_prise_1_000_nok / transfers_number * 1000,
+         average_price = ifelse(is.nan(average_price), NA, average_price)) %>% 
+  drop_na() %>% 
+  filter(region %in% c("Oslo", "Trondheim", "Bergen", "Tromsø", "Stavanger", "Ålesund", "Bodø", "Kristiansand")) %>% 
+  mutate(country = "Norway",
+         currency = "NOK") %>% 
+  select(region, year, average_price, country, currency)
+
+ggplot(no_data, aes(x = year, y = average_price, color = region)) + 
+  geom_line(size = 1.15, lineend = "round") +
+  ggrepel::geom_text_repel(data = . %>% group_by(region) %>% filter(year == max(year)),
+                           aes(label = region), hjust = 0) + 
+  labs(title = "Average housing price in Norway (in NOK)") +
+  scale_y_continuous(labels = scales::dollar_format(prefix = NULL, suffix = " kr", big.mark = " ")) +
+  theme(
+    legend.position = "none",
+    plot.title.position = "plot"
+  )
+
+plotly::ggplotly(last_plot())
+```
+
+```{r load-netherlands}
+nl_municipality_codes <- readxl::read_excel("files/gemeenten-alfabetisch-2021.xlsx") %>% 
+  janitor::clean_names()
+
+nl_data <- read_csv2("files/83625NED_UntypedDataSet_07032021_165540.csv") %>% 
+  janitor::clean_names() %>% 
+  left_join(nl_municipality_codes, by = c("regio_s" = "gemeentecode_gm")) %>% 
+  mutate(year = parse_number(perioden)) %>% 
+  rename(average_price = gemiddelde_verkoopprijs_1,
+         region = gemeentenaam) %>% 
+  filter(region %in% c("Amsterdam","Rotterdam","Den Haag","Apeldoorn","Groningen","Maastricht")) %>% 
+  mutate(country = "Netherlands",
+         currency = "EUR") %>% 
+  select(region, year, average_price, country, currency)
+
+ggplot(nl_data, aes(x = year, y = average_price, color = region)) + 
+  geom_line(size = 1.15, lineend = "round") +
+  ggrepel::geom_text_repel(data = . %>% filter(year == 2019),
+                           aes(label = region), hjust = 0) + 
+  labs(title = "Average housing price in the Netherlands (in EUR)") +
+  scale_y_continuous(labels = scales::dollar_format(prefix = "€", big.mark = " ")) +
+  theme(
+    legend.position = "none",
+    plot.title.position = "plot"
+  )
+```
+
+```{r load-uk}
+uk_data <- read_csv("http://publicdata.landregistry.gov.uk/market-trend-data/house-price-index-data/Average-prices-2020-12.csv?utm_medium=GOV.UK&utm_source=datadownload&utm_campaign=average_price&utm_term=9.30_17_02_21") %>% 
+  janitor::clean_names() %>% 
+  mutate(year = lubridate::year(date)) %>% 
+  group_by(region_name, year) %>% 
+  summarise(average_price = mean(average_price)) %>% 
+  filter(region_name %in% c("London", "City of London", "Birmingham", "Manchester", "City of Edinburgh", "City of Bristol", "England", "Scotland", "Wales", "Northern Ireland")) %>% 
+  mutate(country = "UK",
+         currency = "GBP") %>% 
+  select(region = region_name, year, average_price, country, currency)
+
+ggplot(uk_data, aes(x = year, y = average_price, color = region)) + 
+  geom_line(size = 1.15, lineend = "round") +
+  ggrepel::geom_text_repel(data = . %>% filter(year == 2019),
+                           aes(label = region), hjust = 0) + 
+  labs(title = "Average housing price in the UK (in GBP)") +
+  scale_y_continuous(labels = scales::dollar_format(prefix = "£", big.mark = " ")) +
+  theme(
+    legend.position = "none",
+    plot.title.position = "plot"
+  )
+
+pre_year <- 1980
+
+uk_data %>% 
+  filter(year <= pre_year) %>% 
+  ggplot(aes(x = year, y = average_price, color = region)) + 
+  geom_line(size = 1.15, lineend = "round") +
+  ggrepel::geom_text_repel(data = . %>% group_by(region) %>% filter(year == max(year)),
+                           aes(label = region), hjust = 0) + 
+  labs(title = glue::glue("Average housing price in the UK pre-{pre_year} (in GBP)")) +
+  scale_y_continuous(labels = scales::dollar_format(prefix = "£", big.mark = " ")) +
+  theme(
+    legend.position = "none",
+    plot.title.position = "plot"
+  )
+```
+
+```{r load-sweden}
+se_data <- read_csv2("files/Stockholm_housing_prices.csv", skip = 2, locale = readr::locale(encoding = "latin1"), na = "..") %>% 
+  janitor::clean_names() %>% 
+  mutate(region = str_extract(region, "[A-Z|Å|Ä|Ö][a-z|å|ä|ö]+")) %>% 
+  pivot_longer(cols = starts_with("x"), names_to = "year", values_to = "average_price") %>% 
+  mutate(year = parse_number(year),
+         average_price = average_price * 1000) %>% 
+  filter(region %in% c("Stockholm","Göteborg","Malmö","Lund","Solna","Uppsala","Linköping","Helsingborg")) %>%
+  mutate(country = "Sweden",
+         currency = "SEK")
+
+ggplot(se_data, aes(x = year, y = average_price, color = region)) + 
+  geom_line(size = 1.15, lineend = "round") +
+  ggrepel::geom_text_repel(data = . %>% group_by(region) %>% filter(year == max(year)),
+                           aes(label = region), hjust = 0) + 
+  labs(title = "Average housing price in Norway (in SEK)") +
+  scale_y_continuous(labels = scales::dollar_format(prefix = NULL, suffix = " kr", big.mark = " ")) +
+  theme(
+    legend.position = "none",
+    plot.title.position = "plot"
+  )
+```
+
+```{r load-belgium}
+be_data <- read_csv("files/BE_huizenprijzen.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(gewest = ifelse(str_detect(gewest,"Brussels"),"Brussels",gewest),
+         country = "Belgium",
+         currency = "EUR") %>% 
+  select(region = gewest, year = jaar, average_price = gemiddelde_prijs_per_gebouw, country, currency)
+
+ggplot(be_data, aes(x = year, y = average_price, color = region)) + 
+  geom_line(size = 1.15, lineend = "round") +
+  ggrepel::geom_text_repel(data = . %>% filter(year == max(year)),
+                           aes(label = region), hjust = 0) + 
+  labs(title = "Average housing price in Belgium (in EUR)") +
+  scale_y_continuous(labels = scales::dollar_format(prefix = "€")) +
+  theme(
+    legend.position = "none",
+    plot.title.position = "plot"
+  )
+```
+
+
+```{r conversion-rates}
+from_currency <- c("NOK","EUR","GBP","SEK")
+to_currency <- "EUR"
+
+currency_conversion <- quantmod::getQuote(glue::glue("{from_currency}{to_currency}=X")) %>% 
+  rownames_to_column("currency") %>% 
+  as_tibble() %>% 
+  janitor::clean_names() %>% 
+  mutate(currency = str_remove(currency, "EUR=X")) %>% 
+  select(currency, conversion_rate = last)
+```
+
+
+```{r combine-capitals}
+data <- bind_rows(no_data, nl_data, uk_data, se_data, be_data) %>% 
+  inner_join(currency_conversion) %>% 
+  mutate(average_price_usd = average_price * conversion_rate) %>% 
+  filter(region %in% c("Oslo", "Amsterdam","London","Stockholm","Copenhagen","Brussels"))
+
+data %>% 
+  filter(year > 1990) %>% 
+  ggplot(aes(x = year, y = average_price_usd, color = region)) + 
+  geom_line(size = 1.15, lineend = "round") +
+  ggrepel::geom_text_repel(data = . %>% group_by(region) %>% filter(year == max(year)),
+                           aes(label = region)) +
+  labs(title = "Average housing price in European capitals (in EUR)") +
+  scale_y_continuous(labels = scales::dollar_format(prefix = "€", big.mark = " ")) + 
+  theme(
+    legend.position = "none",
+    plot.title.position = "plot"
+  )
+```
+
+```{r load-europe}
+data_eu <- read_tsv("files/estat_prc_hpi_a$defaultview.tsv", na = ":") %>%
+  janitor::clean_names() %>% 
+  bind_cols(read_delim(.$freq_purchase_unit_geo_time_period, delim = ",", 
+                       col_names = c("freq","purchase","unit","geo"))) %>% 
+  select(-freq_purchase_unit_geo_time_period) %>% 
+  relocate(starts_with("x"), .after = last_col()) %>% 
+  mutate(region = countrycode::countrycode(geo, "iso2c", "country.name"),
+         region = ifelse(is.na(region), geo, region)) %>%
+  pivot_longer(cols = starts_with("x"), names_to = "year", values_to = "hpi") %>% 
+  mutate(across(c(year,hpi), parse_number),
+         year = as.Date(sprintf("%s-01-01",year), format = "%Y-%m-%d"))
+
+data_eu %>% 
+  filter(purchase == "TOTAL",
+         str_detect(unit, "INX")) %>% 
+  group_by(region) %>% 
+  arrange(year) %>% 
+  mutate(earliest_hpi = first(hpi),
+         hpi_earliest = hpi / earliest_hpi) %>% 
+  filter(region %in% c("EU","Norway","Sweden","Denmark","Finland","Iceland","Netherlands","UK","Germany","France","Spain","Portugal","Italy")) %>% 
+  ggplot(aes(x = year, y = hpi_earliest, color = region)) + 
+  geom_line(size = 1.15, lineend = "round") +
+  ggrepel::geom_text_repel(data = . %>% group_by(region) %>% filter(year == max(year)),
+                           aes(label = region)) +
+  labs(title = "House price index in Europe (2010 = 100)") +
+  scale_y_continuous(labels = scales::label_percent(), breaks = seq(0,4,0.25)) +
+  theme(
+    legend.position = "none",
+    plot.title.position = "plot"
+  )
+```
+
+```{r hpi-norway}
+no_data_hpi <- read_csv2("files/Norway_house_price_index.csv", skip = 2, locale = readr::locale(encoding = "latin1"), na = "..") %>% 
+  janitor::clean_names() %>% 
+  mutate(across(starts_with("x"), as.character)) %>% 
+  pivot_longer(starts_with("x"), names_to = "year", values_to = "hpi") %>% 
+  mutate(across(c(year,hpi), parse_number),
+         hpi = ifelse(year >= 2017, hpi / 10, hpi)) %>% 
+  filter(hpi > 0)
+
+no_data_hpi %>% 
+  filter(boligtype == "Boliger i alt",
+         year >= 2005) %>% 
+  group_by(region) %>% 
+  arrange(year) %>% 
+  mutate(earliest_hpi = first(hpi),
+         hpi_earliest = hpi / earliest_hpi) %>% 
+  filter(str_detect(region,"Oslo|Bergen|Trondheim|Stavanger")) %>% 
+  ggplot(aes(x = year, y = hpi_earliest, color = region)) + 
+  geom_line(size = 1.15, lineend = "round") +
+  ggrepel::geom_text_repel(data = . %>% group_by(region) %>% filter(year == max(year)),
+                           aes(label = region)) +
+  labs(title = "House price index in Norway (2010 = 100)") +
+  scale_y_continuous(labels = scales::label_percent(), breaks = seq(0,4,0.25)) +
+  theme(
+    legend.position = "none",
+    plot.title.position = "plot"
+  )
+```
+

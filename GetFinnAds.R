@@ -14,11 +14,13 @@ list_url <- "https://www.finn.no/realestate/homes/search.html?is_new_property=fa
 n_ads <- read_html(list_url) %>% 
   html_nodes(".u-strong") %>%
   html_text() %>% 
-  parse_number() %>% 
+  str_remove_all("[[:blank:]]") %>% 
+  parse_number(trim_ws = TRUE) %>% 
   unique()
 
 n_ads_per_page <- read_html(list_url) %>% 
   html_nodes(".ads__unit") %>% 
+  as.character() %>% 
   str_extract_all("\\d{9}") %>% 
   map(., 1) %>% 
   unlist() %>% 
@@ -143,6 +145,7 @@ for (page in seq(n_pages)) {
   
   ad_id <- read_html(new_url) %>% 
     html_nodes(".ads__unit") %>% 
+    as.character() %>% 
     str_extract_all("\\d{9}") %>% 
     map(., 1) %>% 
     unlist() %>% 
@@ -163,20 +166,22 @@ for (i in ids) {
   
   idx <- which(ids == i)
   print(glue::glue("Scraping data for id {i} ({round(idx * 100 / length(ids),2)}%)"))
-  ad_data <- scrape_ad(ad_url = glue::glue("https://www.finn.no/realestate/homes/ad.html?finnkode={i}"),
-                       verbose = FALSE, new_building = FALSE)
+  try(
+    ad_data <- scrape_ad(ad_url = glue::glue("https://www.finn.no/realestate/homes/ad.html?finnkode={i}"),
+                         verbose = FALSE, new_building = FALSE)
+  )
   
   data <- bind_rows(data, ad_data) %>% 
-    relocate(new_building, .after = last_col())
+    select(everything(), new_building)
   
 }
 
 #map_dfr(ids, ~ scrape_ad(ad_url = glue::glue("https://www.finn.no/realestate/homes/ad.html?finnkode={.x}"),
-#        verbose = FALSE, new_building = FALSE))
+#        verbose = TRUE, new_building = FALSE))
 
 #-- Write to file ------------------------
 
-write_csv(data, here::here("files",glue::glue("housing_listings_{Sys.Date()}.csv")))
+write_csv(data, here::here("files", glue::glue("housing_listings_{Sys.Date()}.csv")))
 
 
 
