@@ -1,0 +1,200 @@
+---
+title: "Can Norwegians afford a house in Oslo?"
+output:
+  html_document:
+    css: "style.css"
+    includes:
+      after_body: footer.html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(fig.retina = 2, echo = FALSE, message = FALSE, warning = FALSE, 
+                      fig.align = "center", fig.width = 9, fig.height = 6, out.width = "100%")
+```
+
+```{r setup, message=FALSE, warning=FALSE, cache=FALSE, echo=FALSE}
+library(tidyverse)
+library(magrittr)
+
+theme_set(ggthemes::theme_fivethirtyeight())
+
+mortgage_factor <- 5
+
+min_wage <- 209.70 * 37.5 * 40
+```
+
+Salary estimates for individuals with completed higher education (level 7-8) with any field of study.
+
+```{r load-salary-data}
+salary_data <- read_csv2("files/AvtaltManedslonn.csv", locale = readr::locale(encoding = "latin1"), na = ":", skip = 2) %>% 
+  janitor::clean_names() %>% 
+  mutate(across(starts_with("x"), parse_number))
+
+high_ed_salary <- salary_data %>% 
+  filter(str_detect(level_of_education, "level 7-8"))
+
+uni_salary <- high_ed_salary %>% 
+  filter(str_detect(number_of_years_since_education_was_completed, "Total"),
+         str_detect(field_of_study, "All")) %>% 
+  select(level_of_education, number_of_years_since_education_was_completed, field_of_study,
+         contains("2019")) %>%
+  mutate(sd = (basic_monthly_salary_nok_2019_upper_quartile - basic_monthly_salary_nok_2019_lower_quartile) / 1.35)
+
+uni_salary_distribution <- uni_salary %$% rnorm(basic_monthly_salary_nok_2019_number_of_full_time_equivalents, basic_monthly_salary_nok_2019_median, sd) * 12 %>% 
+  base::subset(. > 0)
+```
+
+```{r plot-salary-distribution}
+salary_density <- uni_salary_distribution %>% 
+  density() %$%
+  tibble(x = x, y = y) %>% 
+  filter(x > min_wage)
+
+salary_brackets <- uni_salary_distribution %>% 
+  base::subset(. > min_wage) %>% 
+  quantile(., c(seq(0,0.9,0.1),0.99))
+
+ggplot(data = salary_density, aes(x = x, y = y)) + 
+  geom_area(fill = "#556B77", color = "#556B77", alpha = 0.8) +
+  geom_vline(xintercept = salary_brackets, linetype = "dashed") +
+  geom_label(data = tibble(), 
+             aes(x = salary_brackets, y = rev(seq(2e-6,  1e-7, length.out = length(salary_brackets))), 
+                 label = glue::glue("{names(salary_brackets)}: {scales::dollar(salary_brackets, 
+                                   prefix = NULL, suffix = ' NOK', big.mark = ' ', accuracy = 2)}")),
+             hjust = 0, nudge_x = 1e4) +
+  labs(title = "Salary distribution for individuals with higher education (level 7-8)") +
+  scale_x_continuous(labels = scales::label_dollar(prefix = NULL, suffix = " kr", big.mark = " "),
+                     limits = c(NA,2.1e6)) + 
+  scale_y_continuous(labels = NULL)
+```
+
+```{r get-last-scraped-file}
+last_housing_file <- list.files(path = "files", pattern = "housing_listings_(.*).csv", full.names = TRUE) %>% 
+  as_tibble() %>% 
+  rename(file = value) %>% 
+  mutate(date = str_extract(file, "2021-[0|1][0-9]-[0-3][0-9]"),
+         date = as.Date(date)) %>% 
+  arrange(rev(date)) %>% 
+  slice(1) %>% 
+  pull(file)
+```
+
+
+```{r load-housing-prices}
+areas_of_interest <- "Majorstu[en|a]|Frogner|Fagerborg|Bislett|Marienlyst|Sagene|Bjølsen|Nydalen|Tåsen|Grünnerløkka|St. Hanshaugen"
+
+housing_data <- read_csv(last_housing_file) %>% 
+  filter(str_detect(location, areas_of_interest)) %>%
+  summarise(mean_price = mean(price),
+            sd_price = sd(price),
+            median_price = median(price),
+            lower_quantile = quantile(price, 0.25),
+            upper_quantile = quantile(price, 0.75),
+            min_price = min(price),
+            max_price = max(price),
+            n = n()) %>% 
+  mutate(iqr_price = upper_quantile - lower_quantile)
+
+avg_price_oslo <- housing_data %>% 
+  pull(mean_price)
+
+housing_distribution <- housing_data %$% rnorm(n, mean_price, sd_price) %>% 
+  as_tibble() %>% 
+  filter(value > housing_data$min_price & value < housing_data$max_price)
+
+uni_mortgage_distribution <- multiply_by(uni_salary_distribution, mortgage_factor) %>% 
+  base::subset(. > min_wage * mortgage_factor)
+```
+
+```{r extract-statistics}
+total_density_length <- uni_mortgage_distribution %>% 
+  density() %>% 
+  .$x %>% 
+  length()
+
+min_housing_density_length <- uni_mortgage_distribution %>% 
+  density() %>% 
+  .$x %>% 
+  base::subset(. > housing_data$min_price) %>% 
+  length()
+
+median_housing_density_length <- uni_mortgage_distribution %>% 
+  density() %>% 
+  .$x %>% 
+  base::subset(. > housing_data$median_price) %>% 
+  length()
+
+glue::glue("Selected areas: {str_replace_all(areas_of_interest,\"\\\\|\",\", \")}")
+
+divide_by(min_housing_density_length, total_density_length) %>% 
+  scales::percent(accuracy = 0.01) %>% 
+  glue::glue(" of university graduates can afford the cheapest house in selected areas")
+
+divide_by(median_housing_density_length, total_density_length) %>% 
+  scales::percent(accuracy = 0.001) %>% 
+  glue::glue(" of university graduates can afford the median house of {scales::dollar(housing_data$median_price, big.mark = \" \", suffix = \" kr\", prefix = NULL)} in selected areas")
+```
+
+```{r plot-single-incomes}
+afford_quantiles <- uni_mortgage_distribution %>% 
+  base::subset(. > min_wage * mortgage_factor) %>% 
+  quantile(., c(seq(0.5,0.9,0.1),0.99))
+
+label_y <- uni_mortgage_distribution %>% 
+  density() %>% 
+  .["y"] %>% 
+  as_vector() %>% 
+  max() %>% 
+  sum(., 1e-7)
+
+afford_quantiles_labels <- glue::glue("{names(afford_quantiles)}: {scales::dollar(afford_quantiles, big.mark = \" \", suffix = \" kr\", prefix = NULL)}")
+
+tibble(value = uni_mortgage_distribution, unit = glue::glue("mortgage ({mortgage_factor} x annual gross income)")) %>% 
+  bind_rows(housing_distribution %>% mutate(unit = "housing price")) %>% 
+  ggplot(aes(x = value, fill = unit)) + 
+  geom_vline(xintercept = afford_quantiles) +
+  geom_label(data = tibble(), aes(x = afford_quantiles, y = seq(label_y,label_y - 2e-7,length.out = 6),
+                                  label = afford_quantiles_labels),
+             hjust = 0, inherit.aes = FALSE) +
+  geom_density(trim = TRUE, alpha = 0.8) +
+  labs(title = "Can single University graduates afford a house in Oslo?",
+       fill = NULL) +
+  scale_x_continuous(labels = scales::label_dollar(prefix = NULL, suffix = " kr", big.mark = " ")) + 
+  scale_y_continuous(labels = NULL) +
+  theme(legend.direction = "vertical")
+```
+
+```{r plot-couples-incomes}
+afford_quantiles_couples <- multiply_by(uni_mortgage_distribution, 2) %>% 
+  base::subset(. > min_wage * mortgage_factor * 2) %>%
+  quantile(., c(seq(0.5,0.9,0.1),0.99))
+
+label_y_couples <- multiply_by(uni_mortgage_distribution, 2) %>% 
+  density() %>% 
+  .$y %>% 
+  max() %>% 
+  sum(., 1e-7)
+
+afford_quantiles_labels_couples <- glue::glue("{names(afford_quantiles_couples)}: {scales::dollar(afford_quantiles_couples, big.mark = \" \", suffix = \" kr\", prefix = NULL)}")
+
+tibble(value = uni_mortgage_distribution * 2, unit = glue::glue("mortgage ({mortgage_factor} x annual gross income x 2)")) %>% 
+  bind_rows(housing_distribution %>% mutate(unit = "housing price")) %>% 
+  ggplot(aes(x = value, fill = unit)) + 
+  geom_vline(xintercept = afford_quantiles_couples) +
+  geom_label(data = tibble(), aes(x = afford_quantiles_couples, 
+                                  y = seq(label_y_couples, label_y_couples - 1e-7, length.out = 6),
+                                  label = afford_quantiles_labels_couples),
+             hjust = 1, inherit.aes = FALSE) +
+  geom_density(trim = TRUE, alpha = 0.8) +
+  labs(title = "Can University-educated couples afford a house in Oslo?",
+       fill = NULL) +
+  scale_x_continuous(labels = scales::label_dollar(prefix = NULL, suffix = " kr", big.mark = " ")) + 
+  scale_y_continuous(labels = NULL) +
+  theme(legend.direction = "vertical")
+```
+
+
+
+

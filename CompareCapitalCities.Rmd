@@ -10,7 +10,8 @@ editor_options:
 ---
 
 ```{r include=FALSE}
-knitr::opts_chunk$set(fig.retina = 2, echo = FALSE, message = FALSE, warning = FALSE, fig.align = "center")
+knitr::opts_chunk$set(fig.retina = 2, echo = FALSE, message = FALSE, warning = FALSE, 
+                      fig.align = "center", fig.width = 9, fig.height = 6, out.width = "100%")
 ```
 
 ```{r setup, message=FALSE, warning=FALSE, cache=FALSE, echo=FALSE}
@@ -131,7 +132,7 @@ ggplot(se_data, aes(x = year, y = average_price, color = region)) +
   geom_line(size = 1.15, lineend = "round") +
   ggrepel::geom_text_repel(data = . %>% group_by(region) %>% filter(year == max(year)),
                            aes(label = region), hjust = 0) + 
-  labs(title = "Average housing price in Norway (in SEK)") +
+  labs(title = "Average housing price in Sweden (in SEK)") +
   scale_y_continuous(labels = scales::dollar_format(prefix = NULL, suffix = " kr", big.mark = " ")) +
   theme(
     legend.position = "none",

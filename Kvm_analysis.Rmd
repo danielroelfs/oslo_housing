@@ -20,8 +20,19 @@ library(tidyverse)
 theme_set(ggthemes::theme_fivethirtyeight())
 ```
 
+```{r get-last-scraped-file}
+last_housing_file <- list.files(path = "files", pattern = "housing_listings_(.*).csv", full.names = TRUE) %>% 
+  as_tibble() %>% 
+  rename(file = value) %>% 
+  mutate(date = str_extract(file, "2021-[0|1][0-9]-[0-3][0-9]"),
+         date = as.Date(date)) %>% 
+  arrange(rev(date)) %>% 
+  slice(1) %>% 
+  pull(file)
+```
+
 ```{r load-data}
-data <- read_csv(glue::glue("files/housing_listings_{Sys.Date()}.csv"), col_types = cols()) %>% 
+data <- read_csv(glue::glue(last_housing_file), col_types = cols()) %>% 
   mutate(location = str_to_title(location),
          location = str_remove_all(location,"#"),
          title = str_to_sentence(title)) %>% 
