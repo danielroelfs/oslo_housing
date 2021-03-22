@@ -17,6 +17,7 @@ knitr::opts_chunk$set(fig.retina = 2, echo = FALSE, message = FALSE, warning = F
 ```{r setup, message=FALSE, warning=FALSE, cache=FALSE, echo=FALSE}
 library(tidyverse)
 library(magrittr)
+library(kableExtra)
 
 theme_set(ggthemes::theme_fivethirtyeight())
 
@@ -83,7 +84,7 @@ last_housing_file <- list.files(path = "files", pattern = "housing_listings_(.*)
 
 
 ```{r load-housing-prices}
-areas_of_interest <- "Majorstu[en|a]|Frogner|Fagerborg|Bislett|Marienlyst|Sagene|Bjølsen|Nydalen|Tåsen|Grünnerløkka|St. Hanshaugen"
+areas_of_interest <- "Majorstu[en|a]|Frogner|Fagerborg|Bislett|Marienlyst|Sagene|Bjølsen|Nydalen|Tåsen|Grünnerløkka|St. Hanshaugen|Holmen|Torshov|Kjelsås|Sogn|Storo"
 
 housing_data <- read_csv(last_housing_file) %>% 
   filter(str_detect(location, areas_of_interest)) %>%
@@ -140,7 +141,7 @@ divide_by(median_housing_density_length, total_density_length) %>%
 ```{r plot-single-incomes}
 afford_quantiles <- uni_mortgage_distribution %>% 
   base::subset(. > min_wage * mortgage_factor) %>% 
-  quantile(., c(seq(0.5,0.9,0.1),0.99))
+  quantile(., c(seq(0.4,0.9,0.1),0.99))
 
 label_y <- uni_mortgage_distribution %>% 
   density() %>% 
@@ -155,7 +156,7 @@ tibble(value = uni_mortgage_distribution, unit = glue::glue("mortgage ({mortgage
   bind_rows(housing_distribution %>% mutate(unit = "housing price")) %>% 
   ggplot(aes(x = value, fill = unit)) + 
   geom_vline(xintercept = afford_quantiles) +
-  geom_label(data = tibble(), aes(x = afford_quantiles, y = seq(label_y,label_y - 2e-7,length.out = 6),
+  geom_label(data = tibble(), aes(x = afford_quantiles, y = seq(label_y,label_y - 2e-7,length.out = length(afford_quantiles)),
                                   label = afford_quantiles_labels),
              hjust = 0, inherit.aes = FALSE) +
   geom_density(trim = TRUE, alpha = 0.8) +
@@ -169,7 +170,7 @@ tibble(value = uni_mortgage_distribution, unit = glue::glue("mortgage ({mortgage
 ```{r plot-couples-incomes}
 afford_quantiles_couples <- multiply_by(uni_mortgage_distribution, 2) %>% 
   base::subset(. > min_wage * mortgage_factor * 2) %>%
-  quantile(., c(seq(0.5,0.9,0.1),0.99))
+  quantile(., c(seq(0.4,0.9,0.1),0.99))
 
 label_y_couples <- multiply_by(uni_mortgage_distribution, 2) %>% 
   density() %>% 
@@ -184,9 +185,8 @@ tibble(value = uni_mortgage_distribution * 2, unit = glue::glue("mortgage ({mort
   ggplot(aes(x = value, fill = unit)) + 
   geom_vline(xintercept = afford_quantiles_couples) +
   geom_label(data = tibble(), aes(x = afford_quantiles_couples, 
-                                  y = seq(label_y_couples, label_y_couples - 1e-7, length.out = 6),
-                                  label = afford_quantiles_labels_couples),
-             hjust = 1, inherit.aes = FALSE) +
+                                  y = seq(label_y_couples, label_y_couples - 1e-7, length.out = length(afford_quantiles_couples)),
+                                  label = afford_quantiles_labels_couples),hjust = 1, inherit.aes = FALSE) +
   geom_density(trim = TRUE, alpha = 0.8) +
   labs(title = "Can University-educated couples afford a house in Oslo?",
        fill = NULL) +
@@ -195,6 +195,163 @@ tibble(value = uni_mortgage_distribution * 2, unit = glue::glue("mortgage ({mort
   theme(legend.direction = "vertical")
 ```
 
+# Relevant scenarios for NORMENT employees
+
+```{r load-latest-listings}
+data <- read_csv(glue::glue(last_housing_file), col_types = cols()) %>% 
+  mutate(location = str_to_title(location),
+         location = str_remove_all(location,"#"),
+         location = str_trim(location),
+         price_per_m2 = price / bruksareal,
+         title = str_to_sentence(title))
+```
+
+## SCENARIO 1: University-educated couple with 2 children
+
+Show listings that an university-educated couple with the 40th percentile salary can afford (60% has higher income and potential mortgage), that has space to give each child their own bedroom. Maximum mortgage defined as 5 times the gross annual income with no previous loans. No ground floor apparments to allow work from home,
+
+```{r listings-with-requirements-couples}
+data %>% 
+  filter(price <= afford_quantiles_couples["40%"],
+         soverom >= 3,
+         etasje > 1,
+         str_detect(location, areas_of_interest)) %>% 
+  select(id,location,address,price,soverom,bruksareal,etasje,price_per_m2,date_changed,ad_url) %>% 
+  mutate(price = format(price, big.mark = ".", decimal.mark = ","),
+         price_per_m2 = format(price_per_m2, big.mark = ".", decimal.mark = ","),
+         bruksareal = glue::glue("{bruksareal}m2"),
+         address = str_replace_all(address,"`","'")) %>% 
+  arrange(price) %>% 
+  kbl() %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), font_size = 14) %>% 
+  scroll_box(width = "100%")
+```
+
+# SCENARIO 2: Single university graduate
+
+Show listings that an university-educated individual with salary in the 40th percentile can afford. Fegardless of years since completion of higher education. Additional requirements are at least one bedroom, and not on the ground floor to allow work from home with little disturbance. Maximum mortgage defined as 5 times the gross annual income with no previous loans. 
+
+```{r listings-with-requirements}
+data %>% 
+  filter(price <= afford_quantiles["40%"],
+         soverom >= 1,
+         etasje > 1,
+         str_detect(location, areas_of_interest)) %>% 
+  select(id,location,address,price,soverom,bruksareal,etasje,price_per_m2,date_changed,ad_url) %>% 
+  mutate(price = format(price, big.mark = ".", decimal.mark = ","),
+         price_per_m2 = format(price_per_m2, big.mark = ".", decimal.mark = ","),
+         bruksareal = glue::glue("{bruksareal}m2"),
+         address = str_replace_all(address,"`","'")) %>% 
+  arrange(price) %>% 
+  kbl() %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), font_size = 14) %>% 
+  scroll_box(width = "100%")
+```
+
+## SCENARIO 3: young university graduate
+
+Show salary and mortage distributions for a single young university graduate. Young in this case is defined as 0-4 years post-graduation in Natural sciences, vocational and technical subjects.
+
+```{r load-young-salary-data}
+young_uni_salary <- salary_data %>% 
+  filter(str_detect(level_of_education, "level 7-8"),
+         str_detect(number_of_years_since_education_was_completed, "0-4"),
+         str_detect(field_of_study, "Natural")) %>% 
+  select(level_of_education, number_of_years_since_education_was_completed, field_of_study,
+         contains("2019")) %>%
+  mutate(sd = (basic_monthly_salary_nok_2019_upper_quartile - basic_monthly_salary_nok_2019_lower_quartile) / 1.35)
+
+young_uni_salary_distribution <- young_uni_salary %$% rnorm(basic_monthly_salary_nok_2019_number_of_full_time_equivalents, basic_monthly_salary_nok_2019_median, sd) * 12 %>% 
+  base::subset(. > 0)
+```
+
+```{r plot-young-salary-distribution}
+young_salary_density <- young_uni_salary_distribution %>% 
+  density() %$%
+  tibble(x = x, y = y) %>% 
+  filter(x > min_wage)
+
+young_salary_brackets <- young_uni_salary_distribution %>% 
+  base::subset(. > min_wage) %>% 
+  quantile(., c(0.01,seq(0.1,0.9,0.1),0.99))
+
+ggplot(data = young_salary_density, aes(x = x, y = y)) + 
+  geom_area(fill = "#556B77", color = "#556B77", alpha = 0.8) +
+  geom_vline(xintercept = young_salary_brackets, linetype = "dashed") +
+  geom_label(data = tibble(), 
+             aes(x = young_salary_brackets, y = rev(seq(3e-6, 2e-7, length.out = length(young_salary_brackets))), 
+                 label = glue::glue("{names(young_salary_brackets)}: {scales::dollar(young_salary_brackets, 
+                                   prefix = NULL, suffix = ' NOK', big.mark = ' ', accuracy = 2)}")),
+             hjust = 0, nudge_x = 1e4) +
+  labs(title = "Salary distribution for young university graduates") +
+  scale_x_continuous(labels = scales::label_dollar(prefix = NULL, suffix = " kr", big.mark = " ")) + 
+  scale_y_continuous(labels = NULL)
+```
 
 
+```{r plot-young-graduate-income}
+young_uni_mortgage_distribution <- multiply_by(young_uni_salary_distribution, mortgage_factor) %>% 
+  base::subset(. > min_wage * mortgage_factor)
 
+afford_quantiles_young <- young_uni_mortgage_distribution %>% 
+  base::subset(. > min_wage * mortgage_factor) %>%
+  quantile(., c(seq(0.3,0.9,0.1),0.99))
+
+label_y_young <- young_uni_mortgage_distribution %>% 
+  density() %>% 
+  .$y %>% 
+  max() %>% 
+  sum(., 1e-7)
+
+afford_quantiles_labels_young <- glue::glue("{names(afford_quantiles_young)}: {scales::dollar(afford_quantiles_young, big.mark = \" \", suffix = \" kr\", prefix = NULL)}")
+
+tibble(value = young_uni_mortgage_distribution, unit = glue::glue("mortgage ({mortgage_factor} x annual gross income)")) %>% 
+  bind_rows(housing_distribution %>% mutate(unit = "housing price")) %>% 
+  ggplot(aes(x = value, fill = unit)) + 
+  geom_vline(xintercept = afford_quantiles_young) +
+  geom_label(data = tibble(), aes(x = afford_quantiles_young, 
+                                  y = seq(label_y_young, label_y_young - 5e-7, length.out = length(afford_quantiles_young)),
+                                  label = afford_quantiles_labels_young), hjust = 0, inherit.aes = FALSE) +
+  geom_density(trim = TRUE, alpha = 0.8) +
+  labs(title = "Can a young university graduate afford a house in Oslo?",
+       fill = NULL) +
+  scale_x_continuous(labels = scales::label_dollar(prefix = NULL, suffix = " kr", big.mark = " ")) + 
+  scale_y_continuous(labels = NULL) +
+  theme(legend.direction = "vertical")
+```
+
+## Listings young university graduates in the 40th percentile can afford
+
+```{r listings-with-requirements-young}
+data %>% 
+  filter(price <= afford_quantiles_young["40%"],
+         soverom >= 1,
+         etasje > 1,
+         str_detect(location, areas_of_interest)) %>% 
+  select(id,location,address,price,soverom,bruksareal,etasje,price_per_m2,date_changed,ad_url) %>% 
+  mutate(price = format(price, big.mark = ".", decimal.mark = ","),
+         price_per_m2 = format(price_per_m2, big.mark = ".", decimal.mark = ","),
+         bruksareal = glue::glue("{bruksareal}m2"),
+         address = str_replace_all(address,"`","'")) %>% 
+  arrange(price) %>% 
+  kbl() %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), font_size = 14) %>% 
+  scroll_box(width = "100%")
+```
+
+### What can you get to get for less than 2 million NOK?
+
+```{r listings-under-2mill}
+data %>% 
+  filter(price <= 2e6,
+         str_detect(location, areas_of_interest)) %>% 
+  select(id,location,address,price,soverom,bruksareal,etasje,price_per_m2,date_changed,ad_url) %>% 
+  mutate(price = format(price, big.mark = ".", decimal.mark = ","),
+         price_per_m2 = format(price_per_m2, big.mark = ".", decimal.mark = ","),
+         bruksareal = glue::glue("{bruksareal}m2"),
+         address = str_replace_all(address,"`","'")) %>% 
+  arrange(price) %>% 
+  kbl() %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), font_size = 14) %>% 
+  scroll_box(width = "100%")
+```

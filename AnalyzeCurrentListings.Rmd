@@ -1,0 +1,101 @@
+---
+title: "Analysis of current ads"
+output:
+  html_document:
+    css: "style.css"
+    includes:
+      after_body: footer.html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, 
+                      fig.width = 9, fig.height = 6, fig.align = "center")
+```
+
+```{r setup, message=FALSE, warning=FALSE, cache=FALSE, echo=FALSE}
+library(tidyverse)
+library(kableExtra)
+
+theme_set(ggthemes::theme_fivethirtyeight() + 
+            theme(plot.title.position = "plot"))
+```
+
+```{r get-last-scraped-file}
+last_housing_file <- list.files(path = "files", pattern = "housing_listings_(.*).csv", full.names = TRUE) %>% 
+  as_tibble() %>% 
+  rename(file = value) %>% 
+  mutate(date = str_extract(file, "2021-[0|1][0-9]-[0-3][0-9]"),
+         date = as.Date(date)) %>% 
+  arrange(rev(date)) %>% 
+  slice(1) %>% 
+  pull(file)
+```
+
+```{r load-data}
+data <- read_csv(glue::glue(last_housing_file), col_types = cols()) %>% 
+  mutate(location = str_to_title(location),
+         location = str_remove_all(location,"#"),
+         location = str_trim(location),
+         price_per_m2 = price / bruksareal,
+         title = str_to_sentence(title))
+```
+
+## Calculate the averages for current listings on Finn
+
+```{r calculate-summary}
+data_summ <- data %>% 
+  summarise(across(c(contains("price"),bruksareal), list(mean = mean, median = median, sem = normentR::sem), na.rm = TRUE),
+            across(contains("price"), ~ quantile(.x, probs = c(0.4,0.6), na.rm = TRUE)),
+            bruksareal_40 = quantile(bruksareal, probs = 0.4, na.rm = TRUE),
+            bruksareal_60 = quantile(bruksareal, probs = 0.6, na.rm = TRUE)) %>% 
+  mutate(price_60 = lead(price),
+         price_per_m2_60 = lead(price_per_m2)) %>% 
+  rename(price_40 = price, 
+         price_per_m2_40 = price_per_m2) %>% 
+  slice(1) %>% 
+  glimpse()
+```
+
+Listings within "average" range. This range is defined as the space between the 40th and 60th percentile for price, price per m2, and floor space.
+
+```{r get-most-average-listings}
+data %>% 
+  filter(price > data_summ$price_40 & price < data_summ$price_60,
+         price_per_m2 > data_summ$price_per_m2_40 & price_per_m2 < data_summ$price_per_m2_60,
+         bruksareal > data_summ$bruksareal_40 & bruksareal < data_summ$bruksareal_60) %>% 
+  select(id,location,address,price,soverom,bruksareal,etasje,price_per_m2,date_changed,ad_url) %>% 
+  mutate(price = format(price, big.mark = ".", decimal.mark = ","),
+         price_per_m2 = format(price_per_m2, big.mark = ".", decimal.mark = ","),
+         bruksareal = glue::glue("{bruksareal}m2"),
+         address = str_replace_all(address,"`","'")) %>% 
+  arrange(price) %>% 
+  kbl() %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), font_size = 14) %>% 
+  scroll_box(width = "100%")
+```
+
+## Get listings below average price
+
+Listings with price below 40th percentile and price per m2 below 60th percentile.
+
+```{r get-affordable}
+data %>% 
+  filter(price < data_summ$price_40,
+         price_per_m2 < data_summ$price_per_m2_60,
+         str_detect(location, "Majorstu[en|a]|Frogner|Fagerborg|Bislett|Marienlyst|Holmenkollen|
+                    Sagene|Bjølsen|Tåsen|Grü")) %>%
+  select(id,location,address,price,soverom,bruksareal,etasje,price_per_m2,date_changed,ad_url) %>% 
+  mutate(price = format(price, big.mark = ".", decimal.mark = ","),
+         price_per_m2 = format(price_per_m2, big.mark = ".", decimal.mark = ","),
+         bruksareal = glue::glue("{bruksareal}m2"),
+         address = str_replace_all(address,"`","'")) %>% 
+  arrange(price) %>% 
+  kbl() %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), font_size = 14) %>% 
+  scroll_box(width = "100%")
+```
+
+
+

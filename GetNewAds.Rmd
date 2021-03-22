@@ -1,0 +1,85 @@
+---
+title: "Get newest ads"
+output:
+  html_document:
+    css: "style.css"
+    includes:
+      after_body: footer.html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, 
+                      fig.width = 9, fig.height = 6, fig.align = "center")
+```
+
+```{r setup, message=FALSE, warning=FALSE, cache=FALSE, echo=FALSE}
+library(tidyverse)
+library(kableExtra)
+
+theme_set(ggthemes::theme_fivethirtyeight() + 
+            theme(plot.title.position = "plot"))
+```
+
+```{r get-last-scraped-file}
+last_housing_file <- list.files(path = "files", pattern = "housing_listings_(.*).csv", full.names = TRUE) %>% 
+  as_tibble() %>% 
+  rename(file = value) %>% 
+  mutate(date = str_extract(file, "2021-[0|1][0-9]-[0-3][0-9]"),
+         date = as.Date(date)) %>% 
+  arrange(rev(date)) %>% 
+  slice(1) %>% 
+  pull(file)
+```
+
+```{r load-data}
+data <- read_csv(glue::glue(last_housing_file), col_types = cols()) %>% 
+  mutate(location = str_to_title(location),
+         location = str_remove_all(location,"#"),
+         location = str_trim(location),
+         price_per_m2 = price / bruksareal,
+         title = str_to_sentence(title))
+```
+
+```{r get-latest-data}
+last_date <- str_extract_all(last_housing_file, "[0-9]+") %>% 
+  unlist() %>% 
+  paste0(., collapse = "-") %>% 
+  parse_date()
+
+newest_data <- data %>% 
+  select(id,location,address,price,soverom,bruksareal,etasje,price_per_m2,date_changed,ad_url) %>% 
+  filter(date_changed >= last_date)
+
+newest_data %>% 
+  mutate(price = format(price, big.mark = ".", decimal.mark = ","),
+         price_per_m2 = format(price_per_m2, big.mark = ".", decimal.mark = ","),
+         bruksareal = glue::glue("{bruksareal}m2"),
+         address = str_replace_all(address,"`","'")) %>% 
+  arrange(price) %>% 
+  kbl() %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), font_size = 14) %>% 
+  scroll_box(width = "100%")
+```
+
+```{r plot-price}
+newest_data %>% 
+  ggplot(aes(x = price)) +
+  geom_histogram(color = "#EBEBEB") +
+  labs(title = "Distribution of housing prices in Oslo among current listings",
+       y = "Number of listings") +
+  scale_x_continuous(breaks = c(1.5e6, seq(5e6,30e6, 5e6)), labels = scales::label_dollar(prefix = NULL, suffix = " kr"))
+
+newest_data %>% 
+  ggplot(aes(x = price_per_m2)) +
+  geom_density(aes(y = ..density.. * 2e6), fill = "grey", alpha = 0.5) +
+  geom_histogram(color = "#EBEBEB") +
+  labs(title = "Distribution of price per m2 in Oslo among current listings",
+       y = "Number of listings") +
+  scale_x_continuous(labels = scales::label_dollar(prefix = NULL, suffix = " kr"))
+```
+
+
+
+

@@ -17,7 +17,8 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE,
 ```{r setup, message=FALSE, warning=FALSE, cache=FALSE, echo=FALSE}
 library(tidyverse)
 
-theme_set(ggthemes::theme_fivethirtyeight())
+theme_set(ggthemes::theme_fivethirtyeight() + 
+            theme(plot.title.position = "plot"))
 ```
 
 ```{r get-last-scraped-file}
@@ -91,13 +92,12 @@ data %>%
   ggplot(aes(x = reorder(location_parsed,price), y = price)) + 
   geom_violin(fill = "grey80") +
   geom_boxplot(width = 0.1) + 
-  geom_text(data = . %>% slice(1), aes(label = n_label, group = 1), y = 2e5, 
+  geom_text(data = . %>% group_by(location_parsed) %>% slice(1), aes(label = n_label, group = 1), y = log10(1.1e8), 
             hjust = 0, vjust = 0, angle = 90) +
   labs(title = "Pris (totalt) i forskjellige områder") +
   scale_x_discrete() + 
-  scale_y_continuous(trans = "log10", labels = scales::label_number(suffix = " kr", big.mark = " ")) +
-  theme(axis.text.x = element_text(angle = 30, hjust = 1),
-        plot.title.position = "plot")
+  scale_y_continuous(trans = "log10", labels = scales::label_number(suffix = " kr", big.mark = " "), limits = c(NA,2e8)) +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))
 ```
 
 ```{r plot-kvm-areas}
@@ -105,13 +105,12 @@ data %>%
   ggplot(aes(x = reorder(location_parsed,price_per_m2), y = price_per_m2)) + 
   geom_violin() +
   geom_boxplot(width = 0.1) + 
-  geom_text(data = . %>% slice(1), aes(label = n_label, group = 1), y = 2e5, 
+  geom_text(data = . %>% group_by(location_parsed) %>% slice(1), aes(label = n_label, group = 1), y = 2.1e5, 
             hjust = 0, vjust = 0, angle = 90) +
   labs(title = "Pris per kvm i forskjellige byområder") +
   scale_x_discrete() + 
-  scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " "), limits = c(NA, 2.2e5)) +
-  theme(axis.text.x = element_text(angle = 30, hjust = 1),
-        plot.title.position = "plot")
+  scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " "), limits = c(NA, 2.3e5)) +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1))
 ```
 
 ```{r plot-pris-kvm}
@@ -129,8 +128,7 @@ data %>%
        color = NULL) +
   scale_x_continuous(trans = "log10") + 
   scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " ")) +
-  theme(plot.title.position = "plot",
-        axis.title = element_text())
+  theme(axis.title = element_text())
 ```
 
 ```{r plot-prisperkvm-kvm}
@@ -149,8 +147,7 @@ data %>%
        color = NULL) +
   scale_x_continuous(trans = "log10") + 
   scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " ")) +
-  theme(plot.title.position = "plot",
-        axis.title = element_text())
+  theme(axis.title = element_text())
 ```
 
 ```{r plot-prisperkvm-pris}
@@ -170,7 +167,6 @@ data %>%
        fill = NULL) +
   scale_x_continuous(trans = "log10", labels = scales::label_number(suffix = " kr", big.mark = " ")) + 
   scale_y_continuous(trans = "log10", labels = scales::label_number(suffix = " kr", big.mark = " ")) +
-  theme(plot.title.position = "plot",
-        axis.title = element_text())
+  theme(axis.title = element_text())
 ```
 

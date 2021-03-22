@@ -109,6 +109,16 @@ scrape_ad <- function(ad_url, verbose = TRUE, new_building = FALSE) {
     str_squish() %>% 
     paste(., collapse = " ")
   
+  date_changed <- url_text %>% 
+    html_table() %>% 
+    .[[1]] %>% 
+    as_tibble() %>% 
+    filter(X1 == "Sist endret") %>% 
+    pull(X2) %>% 
+    str_extract("[^*]+ 2021") %>% 
+    parse_date("%d. %b %Y", locale = locale("nb"))
+  
+  
   # Collect all data in a data frame
   data_out <- tibble(
     new_building = new_building,
@@ -118,6 +128,7 @@ scrape_ad <- function(ad_url, verbose = TRUE, new_building = FALSE) {
     title = title,
     facilities = facilities,
     description_text = description_text,
+    date_changed = date_changed,
     ad_url = ad_url,
     id = ad_id) %>% 
     bind_cols(descriptive_wide) %>% 

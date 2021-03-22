@@ -17,8 +17,11 @@ knitr::opts_chunk$set(fig.retina = 2, echo = FALSE, message = FALSE, warning = F
 ```{r setup, message=FALSE, warning=FALSE, cache=FALSE, echo=FALSE}
 library(tidyverse)
 
-theme_set(ggthemes::theme_fivethirtyeight())
+theme_set(ggthemes::theme_fivethirtyeight() + 
+            theme(plot.title.position = "plot"))
 ```
+
+NB: prices not corrected for inflation!
 
 ```{r load-norway}
 no_data <- read_csv("https://data.ssb.no/api/v0/dataset/65604.csv?lang=en", locale = readr::locale(encoding = "latin1"), na = "..") %>% 
@@ -43,11 +46,9 @@ ggplot(no_data, aes(x = year, y = average_price, color = region)) +
   ggrepel::geom_text_repel(data = . %>% group_by(region) %>% filter(year == max(year)),
                            aes(label = region), hjust = 0) + 
   labs(title = "Average housing price in Norway (in NOK)") +
-  scale_y_continuous(labels = scales::dollar_format(prefix = NULL, suffix = " kr", big.mark = " ")) +
-  theme(
-    legend.position = "none",
-    plot.title.position = "plot"
-  )
+  scale_y_continuous(labels = scales::dollar_format(prefix = NULL, suffix = " kr", big.mark = " "),
+                     limits = c(0,NA)) +
+  theme(legend.position = "none")
 
 plotly::ggplotly(last_plot())
 ```
@@ -62,7 +63,7 @@ nl_data <- read_csv2("files/83625NED_UntypedDataSet_07032021_165540.csv") %>%
   mutate(year = parse_number(perioden)) %>% 
   rename(average_price = gemiddelde_verkoopprijs_1,
          region = gemeentenaam) %>% 
-  filter(region %in% c("Amsterdam","Rotterdam","Den Haag","Apeldoorn","Groningen","Maastricht")) %>% 
+  filter(region %in% c("Amsterdam","Rotterdam","'s-Gravenhage","Utrecht","Leiden","Deventer","Apeldoorn","Groningen","Maastricht")) %>% 
   mutate(country = "Netherlands",
          currency = "EUR") %>% 
   select(region, year, average_price, country, currency)
@@ -72,11 +73,9 @@ ggplot(nl_data, aes(x = year, y = average_price, color = region)) +
   ggrepel::geom_text_repel(data = . %>% filter(year == 2019),
                            aes(label = region), hjust = 0) + 
   labs(title = "Average housing price in the Netherlands (in EUR)") +
-  scale_y_continuous(labels = scales::dollar_format(prefix = "€", big.mark = " ")) +
-  theme(
-    legend.position = "none",
-    plot.title.position = "plot"
-  )
+  scale_y_continuous(labels = scales::dollar_format(prefix = "€", big.mark = " "),
+                     limits = c(0,NA)) +
+  theme(legend.position = "none")
 ```
 
 ```{r load-uk}
@@ -90,18 +89,17 @@ uk_data <- read_csv("http://publicdata.landregistry.gov.uk/market-trend-data/hou
          currency = "GBP") %>% 
   select(region = region_name, year, average_price, country, currency)
 
-ggplot(uk_data, aes(x = year, y = average_price, color = region)) + 
+pre_year <- 1990
+
+uk_data %>% 
+  filter(year >= pre_year) %>% 
+  ggplot(aes(x = year, y = average_price, color = region)) + 
   geom_line(size = 1.15, lineend = "round") +
   ggrepel::geom_text_repel(data = . %>% filter(year == 2019),
                            aes(label = region), hjust = 0) + 
   labs(title = "Average housing price in the UK (in GBP)") +
   scale_y_continuous(labels = scales::dollar_format(prefix = "£", big.mark = " ")) +
-  theme(
-    legend.position = "none",
-    plot.title.position = "plot"
-  )
-
-pre_year <- 1980
+  theme(legend.position = "none")
 
 uk_data %>% 
   filter(year <= pre_year) %>% 
@@ -110,11 +108,9 @@ uk_data %>%
   ggrepel::geom_text_repel(data = . %>% group_by(region) %>% filter(year == max(year)),
                            aes(label = region), hjust = 0) + 
   labs(title = glue::glue("Average housing price in the UK pre-{pre_year} (in GBP)")) +
-  scale_y_continuous(labels = scales::dollar_format(prefix = "£", big.mark = " ")) +
-  theme(
-    legend.position = "none",
-    plot.title.position = "plot"
-  )
+  scale_y_continuous(labels = scales::dollar_format(prefix = "£", big.mark = " "),
+                     limits = c(0,NA)) +
+  theme(legend.position = "none")
 ```
 
 ```{r load-sweden}
@@ -128,16 +124,16 @@ se_data <- read_csv2("files/Stockholm_housing_prices.csv", skip = 2, locale = re
   mutate(country = "Sweden",
          currency = "SEK")
 
-ggplot(se_data, aes(x = year, y = average_price, color = region)) + 
+se_data %>% 
+  filter(year > 1990) %>% 
+ggplot(aes(x = year, y = average_price, color = region)) + 
   geom_line(size = 1.15, lineend = "round") +
   ggrepel::geom_text_repel(data = . %>% group_by(region) %>% filter(year == max(year)),
                            aes(label = region), hjust = 0) + 
   labs(title = "Average housing price in Sweden (in SEK)") +
-  scale_y_continuous(labels = scales::dollar_format(prefix = NULL, suffix = " kr", big.mark = " ")) +
-  theme(
-    legend.position = "none",
-    plot.title.position = "plot"
-  )
+  scale_y_continuous(labels = scales::dollar_format(prefix = NULL, suffix = " kr", big.mark = " "),
+                     limits = c(0,NA)) +
+  theme(legend.position = "none")
 ```
 
 ```{r load-belgium}
@@ -153,11 +149,8 @@ ggplot(be_data, aes(x = year, y = average_price, color = region)) +
   ggrepel::geom_text_repel(data = . %>% filter(year == max(year)),
                            aes(label = region), hjust = 0) + 
   labs(title = "Average housing price in Belgium (in EUR)") +
-  scale_y_continuous(labels = scales::dollar_format(prefix = "€")) +
-  theme(
-    legend.position = "none",
-    plot.title.position = "plot"
-  )
+  scale_y_continuous(labels = scales::dollar_format(prefix = "€"), limits = c(0,NA)) +
+  theme(legend.position = "none")
 ```
 
 
@@ -187,11 +180,9 @@ data %>%
   ggrepel::geom_text_repel(data = . %>% group_by(region) %>% filter(year == max(year)),
                            aes(label = region)) +
   labs(title = "Average housing price in European capitals (in EUR)") +
-  scale_y_continuous(labels = scales::dollar_format(prefix = "€", big.mark = " ")) + 
-  theme(
-    legend.position = "none",
-    plot.title.position = "plot"
-  )
+  scale_y_continuous(labels = scales::dollar_format(prefix = "€", big.mark = " "),
+                     limits = c(0,NA)) + 
+  theme(legend.position = "none")
 ```
 
 ```{r load-europe}
@@ -221,10 +212,7 @@ data_eu %>%
                            aes(label = region)) +
   labs(title = "House price index in Europe (2010 = 100)") +
   scale_y_continuous(labels = scales::label_percent(), breaks = seq(0,4,0.25)) +
-  theme(
-    legend.position = "none",
-    plot.title.position = "plot"
-  )
+  theme(legend.position = "none")
 ```
 
 ```{r hpi-norway}
@@ -251,8 +239,6 @@ no_data_hpi %>%
   labs(title = "House price index in Norway (2010 = 100)") +
   scale_y_continuous(labels = scales::label_percent(), breaks = seq(0,4,0.25)) +
   theme(
-    legend.position = "none",
-    plot.title.position = "plot"
-  )
+    legend.position = "none")
 ```
 

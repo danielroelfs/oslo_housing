@@ -17,7 +17,8 @@ knitr::opts_chunk$set(fig.retina = 2, echo = FALSE, message = FALSE, warning = F
 ```{r setup, message=FALSE, warning=FALSE, cache=FALSE, echo=FALSE}
 library(tidyverse)
 
-theme_set(ggthemes::theme_fivethirtyeight())
+theme_set(ggthemes::theme_fivethirtyeight() + 
+            theme(plot.title.position = "plot"))
 ```
 
 ```{r price-per-transfer-county}
@@ -39,8 +40,7 @@ data %>%
   labs(title = "Average purchase price per transfer (county)",
        color = NULL) +
   scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " "),
-                     limits = c(0,8e6)) +
-  theme(plot.title.position = "plot")
+                     limits = c(0,8e6))
 ```
 
 ```{r price-per-transfer-municipality}
@@ -71,8 +71,7 @@ data %>%
   geom_smooth(linetype = "dashed") +
   labs(title = "Average purchase price per transfer (municipality)",
        color = NULL) +
-  scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " ")) +
-  theme(plot.title.position = "plot")
+  scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " "))
 ```
 
 ```{r price-per-kvm-municipality}
@@ -93,8 +92,7 @@ data %>%
   geom_smooth(linetype = "dashed") +
   labs(title = "Average purchase price per square meter (municipality)",
        color = NULL) +
-  scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " ")) +
-  theme(plot.title.position = "plot")
+  scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " "))
 ```
 
 ```{r income-municipality}
@@ -117,8 +115,7 @@ data %>%
   labs(title = "Median income for people living alone (after tax)",
        color = NULL,
        fill = NULL) +
-  scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " ")) +
-  theme(plot.title.position = "plot")
+  scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " "))
 ```
 
 ```{r income-brackets}
@@ -136,8 +133,7 @@ data %>%
   geom_col(position = position_dodge()) +
   labs(title = "Income distribution in Oslo",
        fill = NULL) +
-  scale_y_continuous(labels = scales::label_percent()) +
-  theme(plot.title.position = "plot")
+  scale_y_continuous(labels = scales::label_percent())
 ```
 
 ```{r plot-income-vs-housing-prices}
@@ -173,8 +169,7 @@ data %>%
        color = NULL) +
   scale_y_continuous(labels = scales::label_number(suffix = " kr", big.mark = " "),
                      limits = c(NA,8e6), position = "right") +
-  theme(plot.title.position = "plot",
-        plot.caption = element_text(face = "italic"),
+  theme(plot.caption = element_text(face = "italic"),
         legend.direction = "vertical")
 ```
 
