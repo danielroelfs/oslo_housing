@@ -30,7 +30,15 @@ last_housing_file <- list.files(path = "files", pattern = "housing_listings_(.*)
   arrange(rev(date)) %>% 
   slice(1) %>% 
   pull(file)
+
+last_file_date <- last_housing_file %>% 
+  str_extract_all("[0-9]+-[0-9]+-[0-9]+") %>% 
+  unlist() %>% 
+  as.Date() %>% 
+  format(format = "%d/%m/\'%y")
 ```
+
+### Report generated on `r format(Sys.Date(), format = "%d %B %y")` for data from date `r last_file_date`
 
 ```{r load-data}
 data <- read_csv(glue::glue(last_housing_file), col_types = cols()) %>% 
@@ -62,6 +70,7 @@ data <- data %>%
            str_detect(location, "Sagene") ~ "Sagene",
            str_detect(location, "Grønland") ~ "Grønland",
            str_detect(location, "Tjuvholmen") ~ "Tjuvholmen",
+           str_detect(location, "Bjørvika") ~ "Bjørvika",
            str_detect(location, "Vika") ~ "Vika",
            str_detect(location, "Skøyen") ~ "Skøyen",
            str_detect(location, "Stovner") ~ "Stovner",

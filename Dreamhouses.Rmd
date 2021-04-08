@@ -1,0 +1,79 @@
+---
+title: "Dream houses"
+output:
+  html_document:
+    css: "style.css"
+    includes:
+      after_body: footer.html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r include=FALSE}
+knitr::opts_chunk$set(fig.retina = 2, echo = FALSE, message = FALSE, warning = FALSE, 
+                      fig.align = "center", fig.width = 9, fig.height = 6, out.width = "100%")
+```
+
+```{r setup, message=FALSE, warning=FALSE, cache=FALSE, echo=FALSE}
+library(tidyverse)
+library(kableExtra)
+
+theme_set(ggthemes::theme_fivethirtyeight() + 
+            theme(plot.title.position = "plot"))
+```
+
+```{r get-last-scraped-file}
+last_housing_file <- list.files(path = "files", pattern = "housing_listings_(.*).csv", full.names = TRUE) %>% 
+  as_tibble() %>% 
+  rename(file = value) %>% 
+  mutate(date = str_extract(file, "2021-[0|1][0-9]-[0-3][0-9]"),
+         date = as.Date(date)) %>% 
+  arrange(rev(date)) %>% 
+  slice(1) %>% 
+  pull(file)
+```
+
+```{r load-data}
+data <- read_csv(glue::glue(last_housing_file), col_types = cols()) %>% 
+  mutate(location = str_to_title(location),
+         location = str_remove_all(location,"#"),
+         location = str_trim(location),
+         price_per_m2 = price / bruksareal,
+         title = str_to_sentence(title))
+```
+
+## Having fun and despair looking at too nice houses
+
+```{r}
+options(knitr.kable.NA = '')
+
+data_most_expensive <- data %>% 
+  select(id,location,address,price,soverom,bruksareal,etasje,price_per_m2,ad_url) %>% 
+  filter(price > 12e6) %>% 
+  arrange(-price) %>% 
+  mutate(price = format(price, big.mark = ".", decimal.mark = ","),
+         price_per_m2 = format(price_per_m2, big.mark = ".", decimal.mark = ","),
+         bruksareal = glue::glue("{bruksareal}m2"))
+
+data_most_expensive %>% 
+  kbl() %>%
+  kable_styling(bootstrap_options = c("hover", "condensed"), font_size = 14) %>% 
+  scroll_box(width = "100%")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
