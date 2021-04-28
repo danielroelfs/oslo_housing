@@ -11,12 +11,14 @@ editor_options:
 
 ```{r include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, 
-                      fig.width = 9, fig.height = 6, fig.align = "center")
+                      fig.width = 9, fig.height = 6, fig.align = "center", dev.args = list(bg = "#F0F0F0"))
 ```
 
 ```{r setup, message=FALSE, warning=FALSE, cache=FALSE, echo=FALSE}
 library(tidyverse)
+library(tidygeocoder)
 library(kableExtra)
+library(ggtext)
 
 theme_set(ggthemes::theme_fivethirtyeight() + 
             theme(plot.title.position = "plot"))
@@ -106,4 +108,67 @@ data %>%
 ```
 
 
+```{r load-sf-data, eval=FALSE}
+roads_load <- sf::read_sf(dsn = "~/Downloads/norway-latest-free.shp/gis_osm_roads_free_1.shp", 
+                          layer = "gis_osm_roads_free_1", as_tibble = TRUE)
+water_load <- sf::read_sf(dsn = "~/Downloads/norway-latest-free.shp/gis_osm_water_a_free_1.shp",
+                          layer = "gis_osm_water_a_free_1", as_tibble = TRUE)
+
+save(roads_load, water_load, file = "files/Oslo_sf_data.RData")
+```
+
+
+```{r process-sf-data}
+load("files/Oslo_sf_data.RData")
+
+roads_oslo <- sf::st_crop(roads_load, 
+                          xmin = 0.99 * min(data$long, na.rm = TRUE), 
+                          xmax = 1.01 * max(data$long, na.rm = TRUE), 
+                          ymin = 0.9995 * min(data$lat, na.rm = TRUE), 
+                          ymax = 1.0005 * max(data$lat, na.rm = TRUE))
+water_oslo <- sf::st_crop(water_load, 
+                          xmin = 0.99 * min(data$long, na.rm = TRUE), 
+                          xmax = 1.01 * max(data$long, na.rm = TRUE), 
+                          ymin = 0.9995 * min(data$lat, na.rm = TRUE), 
+                          ymax = 1.0005 * max(data$lat, na.rm = TRUE))
+```
+
+```{r create-location-plot, out.width="100%"}
+data %>% 
+  ggplot(aes(x = long, y = lat)) + 
+  #geom_map(data = no_map, map = no_map,
+  #         aes(x = long, y = lat, map_id = id),
+  #         fill = "#7f7f7f", inherit.aes = FALSE) +
+  geom_sf(data = water_oslo,
+          fill = "#cedded",  
+          color = "#cedded",
+          inherit.aes = FALSE) +
+  geom_sf(data = roads_oslo,
+          size = 0.1, color = "grey70",
+          show.legend = "point",
+          inherit.aes = FALSE) + 
+  geom_polygon(
+    data = fhimaps::oslo_ward_map_b2020_default_dt,
+    mapping = aes(x = long, y = lat, group = group),
+    color = "black",
+    fill = "transparent",
+    size = 0.2, inherit.aes = FALSE
+  ) +
+  geom_point(aes(color = log10(price)), alpha = 0.5, stroke = 0) + 
+  #geom_bin2d(alpha = 0.5) +
+  labs(x = NULL,
+       y = NULL,
+       color = "log<sub>10</sub>-transformed housing price") + 
+  scale_x_continuous(expand = c(0,0)) +
+  scale_y_continuous(expand = c(0,0)) +
+  scale_color_gradient(low = "green", high = "red",
+                       guide = guide_colorbar(title.position = "top", title.hjust = 0.5, 
+                                              barwidth = 20, barheight = 0.5, ticks = FALSE)) +
+  coord_sf() +
+  theme(legend.title = element_markdown(),
+        axis.ticks = element_line(),
+        panel.grid.major = element_blank(),
+        plot.background = element_rect(color = "transparent", fill = "#F0F0F0"),
+        panel.background = element_rect(color = "transparent", fill = "#F0F0F0", size = 0))
+```
 

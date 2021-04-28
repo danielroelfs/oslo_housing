@@ -59,6 +59,15 @@ if (!!window.navigator.userAgent.match("MSIE 8")) {
 !function(a){"use strict";a.matchMedia=a.matchMedia||function(a){var b,c=a.documentElement,d=c.firstElementChild||c.firstChild,e=a.createElement("body"),f=a.createElement("div");return f.id="mq-test-1",f.style.cssText="position:absolute;top:-100em",e.style.background="none",e.appendChild(f),function(a){return f.innerHTML='&shy;<style media="'+a+'"> #mq-test-1 { width: 42px; }</style>',c.insertBefore(e,d),b=42===f.offsetWidth,c.removeChild(e),{matches:b,media:a}}}(a.document)}(this),function(a){"use strict";function b(){u(!0)}var c={};a.respond=c,c.update=function(){};var d=[],e=function(){var b=!1;try{b=new a.XMLHttpRequest}catch(c){b=new a.ActiveXObject("Microsoft.XMLHTTP")}return function(){return b}}(),f=function(a,b){var c=e();c&&(c.open("GET",a,!0),c.onreadystatechange=function(){4!==c.readyState||200!==c.status&&304!==c.status||b(c.responseText)},4!==c.readyState&&c.send(null))};if(c.ajax=f,c.queue=d,c.regex={media:/@media[^\{]+\{([^\{\}]*\{[^\}\{]*\})+/gi,keyframes:/@(?:\-(?:o|moz|webkit)\-)?keyframes[^\{]+\{(?:[^\{\}]*\{[^\}\{]*\})+[^\}]*\}/gi,urls:/(url\()['"]?([^\/\)'"][^:\)'"]+)['"]?(\))/g,findStyles:/@media *([^\{]+)\{([\S\s]+?)$/,only:/(only\s+)?([a-zA-Z]+)\s?/,minw:/\([\s]*min\-width\s*:[\s]*([\s]*[0-9\.]+)(px|em)[\s]*\)/,maxw:/\([\s]*max\-width\s*:[\s]*([\s]*[0-9\.]+)(px|em)[\s]*\)/},c.mediaQueriesSupported=a.matchMedia&&null!==a.matchMedia("only all")&&a.matchMedia("only all").matches,!c.mediaQueriesSupported){var g,h,i,j=a.document,k=j.documentElement,l=[],m=[],n=[],o={},p=30,q=j.getElementsByTagName("head")[0]||k,r=j.getElementsByTagName("base")[0],s=q.getElementsByTagName("link"),t=function(){var a,b=j.createElement("div"),c=j.body,d=k.style.fontSize,e=c&&c.style.fontSize,f=!1;return b.style.cssText="position:absolute;font-size:1em;width:1em",c||(c=f=j.createElement("body"),c.style.background="none"),k.style.fontSize="100%",c.style.fontSize="100%",c.appendChild(b),f&&k.insertBefore(c,k.firstChild),a=b.offsetWidth,f?k.removeChild(c):c.removeChild(b),k.style.fontSize=d,e&&(c.style.fontSize=e),a=i=parseFloat(a)},u=function(b){var c="clientWidth",d=k[c],e="CSS1Compat"===j.compatMode&&d||j.body[c]||d,f={},o=s[s.length-1],r=(new Date).getTime();if(b&&g&&p>r-g)return a.clearTimeout(h),h=a.setTimeout(u,p),void 0;g=r;for(var v in l)if(l.hasOwnProperty(v)){var w=l[v],x=w.minw,y=w.maxw,z=null===x,A=null===y,B="em";x&&(x=parseFloat(x)*(x.indexOf(B)>-1?i||t():1)),y&&(y=parseFloat(y)*(y.indexOf(B)>-1?i||t():1)),w.hasquery&&(z&&A||!(z||e>=x)||!(A||y>=e))||(f[w.media]||(f[w.media]=[]),f[w.media].push(m[w.rules]))}for(var C in n)n.hasOwnProperty(C)&&n[C]&&n[C].parentNode===q&&q.removeChild(n[C]);n.length=0;for(var D in f)if(f.hasOwnProperty(D)){var E=j.createElement("style"),F=f[D].join("\n");E.type="text/css",E.media=D,q.insertBefore(E,o.nextSibling),E.styleSheet?E.styleSheet.cssText=F:E.appendChild(j.createTextNode(F)),n.push(E)}},v=function(a,b,d){var e=a.replace(c.regex.keyframes,"").match(c.regex.media),f=e&&e.length||0;b=b.substring(0,b.lastIndexOf("/"));var g=function(a){return a.replace(c.regex.urls,"$1"+b+"$2$3")},h=!f&&d;b.length&&(b+="/"),h&&(f=1);for(var i=0;f>i;i++){var j,k,n,o;h?(j=d,m.push(g(a))):(j=e[i].match(c.regex.findStyles)&&RegExp.$1,m.push(RegExp.$2&&g(RegExp.$2))),n=j.split(","),o=n.length;for(var p=0;o>p;p++)k=n[p],l.push({media:k.split("(")[0].match(c.regex.only)&&RegExp.$2||"all",rules:m.length-1,hasquery:k.indexOf("(")>-1,minw:k.match(c.regex.minw)&&parseFloat(RegExp.$1)+(RegExp.$2||""),maxw:k.match(c.regex.maxw)&&parseFloat(RegExp.$1)+(RegExp.$2||"")})}u()},w=function(){if(d.length){var b=d.shift();f(b.href,function(c){v(c,b.href,b.media),o[b.href]=!0,a.setTimeout(function(){w()},0)})}},x=function(){for(var b=0;b<s.length;b++){var c=s[b],e=c.href,f=c.media,g=c.rel&&"stylesheet"===c.rel.toLowerCase();e&&g&&!o[e]&&(c.styleSheet&&c.styleSheet.rawCssText?(v(c.styleSheet.rawCssText,e,f),o[e]=!0):(!/^([a-zA-Z:]*\/\/)/.test(e)&&!r||e.replace(RegExp.$1,"").split("/")[0]===a.location.host)&&("//"===e.substring(0,2)&&(e=a.location.protocol+e),d.push({href:e,media:f})))}w()};x(),c.update=x,c.getEmValue=t,a.addEventListener?a.addEventListener("resize",b,!1):a.attachEvent&&a.attachEvent("onresize",b)}}(this);
 };
 </script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script>
 
 /**
@@ -455,11 +464,6 @@ border: 0;
     </style>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -472,32 +476,6 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
 
 
 <style type="text/css">
@@ -645,10 +623,6 @@ border: 2px solid var(--link-color);
   margin-left: auto;
   margin-right: auto;
 }
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
-}
 img {
   max-width:100%;
 }
@@ -664,6 +638,9 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+pre code {
+  padding: 0;
+}
 </style>
 
 
@@ -676,7 +653,6 @@ summary {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
@@ -740,7 +716,7 @@ summary {
 
 
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
@@ -815,30 +791,57 @@ Voksenkollveien 6, 0791 Oslo
 </tr>
 <tr>
 <td style="text-align:right;">
-195877971
+198862152
 </td>
 <td style="text-align:left;">
-Lillevann / Holmenkollen
 </td>
 <td style="text-align:left;">
-Rødkleivfaret 2, 0788 Oslo
+Sigyns gate 3, 0260 Oslo
 </td>
 <td style="text-align:left;">
-69.000.000
+70.000.000
 </td>
 <td style="text-align:right;">
 6
 </td>
 <td style="text-align:left;">
-669m2
+787m2
 </td>
 <td style="text-align:right;">
 </td>
 <td style="text-align:left;">
-103.139,01
+88.945,36
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=195877971" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=195877971</a>
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=198862152" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=198862152</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+179039438
+</td>
+<td style="text-align:left;">
+Bygdøy | Strandlinje | Dypvannsbrygge |
+</td>
+<td style="text-align:left;">
+Christian Benneches vei 2F, 0286 Oslo
+</td>
+<td style="text-align:left;">
+68.000.000
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+475m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+143.157,89
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=179039438" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=179039438</a>
 </td>
 </tr>
 <tr>
@@ -871,30 +874,57 @@ Voksenkollveien 57 E, 0790 Oslo
 </tr>
 <tr>
 <td style="text-align:right;">
-209686587
+214922311
 </td>
 <td style="text-align:left;">
 </td>
 <td style="text-align:left;">
-Gregers Grams vei 10A, 0382 Oslo
+Guldbergs vei 27A, 0375 Oslo
+</td>
+<td style="text-align:left;">
+38.000.000
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+NAm2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=214922311" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=214922311</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+212456328
+</td>
+<td style="text-align:left;">
+Frogner/Skillebekk
+</td>
+<td style="text-align:left;">
+Niels Juelsgate 13, 0272 Oslo
 </td>
 <td style="text-align:left;">
 35.000.000
 </td>
 <td style="text-align:right;">
-5
+3
 </td>
 <td style="text-align:left;">
-430m2
+216m2
 </td>
 <td style="text-align:right;">
-4
+2
 </td>
 <td style="text-align:left;">
-81.395,35
+162.037,04
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=209686587" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=209686587</a>
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=212456328" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=212456328</a>
 </td>
 </tr>
 <tr>
@@ -923,6 +953,34 @@ Schleppegrells gate 8, 0556 Oslo
 </td>
 <td style="text-align:left;">
 <a href="https://www.finn.no/realestate/homes/ad.html?finnkode=168531579" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=168531579</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+192800485
+</td>
+<td style="text-align:left;">
+Ulvøya
+</td>
+<td style="text-align:left;">
+Fiskekroken 4, 0139 Oslo
+</td>
+<td style="text-align:left;">
+35.000.000
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:left;">
+363m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+96.418,73
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=192800485" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=192800485</a>
 </td>
 </tr>
 <tr>
@@ -956,35 +1014,6 @@ Helleveien 8A, 0376 Oslo
 </tr>
 <tr>
 <td style="text-align:right;">
-200508977
-</td>
-<td style="text-align:left;">
-Ytterst På Tjuvholmen
-</td>
-<td style="text-align:left;">
-Dyna Brygge 6, 0252 Oslo
-</td>
-<td style="text-align:left;">
-33.500.000
-</td>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:left;">
-169m2
-</td>
-<td style="text-align:right;">
-5
-</td>
-<td style="text-align:left;">
-198.224,85
-</td>
-<td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=200508977" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=200508977</a>
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
 212596229
 </td>
 <td style="text-align:left;">
@@ -1013,42 +1042,96 @@ Ingiers vei 10, 1167 Oslo
 </tr>
 <tr>
 <td style="text-align:right;">
-213462951
+213320691
 </td>
 <td style="text-align:left;">
-Grefsen
+Bestum/Furulund
 </td>
 <td style="text-align:left;">
-Frennings vei 25C, 0588 Oslo
+Furulundsveien 14, 0282 Oslo
+</td>
+<td style="text-align:left;">
+30.000.000
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+404m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+74.257,43
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=213320691" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=213320691</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+216327314
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Hospitsveien 10 A, 0789 Oslo
 </td>
 <td style="text-align:left;">
 29.000.000
 </td>
 <td style="text-align:right;">
-4
+5
 </td>
 <td style="text-align:left;">
-219m2
+372m2
 </td>
 <td style="text-align:right;">
-2
 </td>
 <td style="text-align:left;">
-132.420,09
+77.956,99
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=213462951" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=213462951</a>
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=216327314" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=216327314</a>
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-212954121
+215356248
 </td>
 <td style="text-align:left;">
-Vinderen
+Frogner/Skarpsno
 </td>
 <td style="text-align:left;">
-Ivar Aasens vei 14 A, 0373 Oslo
+Magnus Barfots gate 11, 0273 Oslo
+</td>
+<td style="text-align:left;">
+28.600.000
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+252m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+113.492,06
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215356248" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215356248</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+204329419
+</td>
+<td style="text-align:left;">
+Den Engelske Park / Frognerparken
+</td>
+<td style="text-align:left;">
+Gustav Vigelands vei 24B, 0266 Oslo
 </td>
 <td style="text-align:left;">
 28.500.000
@@ -1057,16 +1140,16 @@ Ivar Aasens vei 14 A, 0373 Oslo
 3
 </td>
 <td style="text-align:left;">
-219m2
+203m2
 </td>
 <td style="text-align:right;">
 2
 </td>
 <td style="text-align:left;">
-130.136,99
+140.394,09
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=212954121" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=212954121</a>
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=204329419" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=204329419</a>
 </td>
 </tr>
 <tr>
@@ -1099,153 +1182,239 @@ Ormsundveien 33 A, 0198 Oslo
 </tr>
 <tr>
 <td style="text-align:right;">
-199104309
+216421189
 </td>
 <td style="text-align:left;">
-Hasle/Frydenberg
+Fagerborg
 </td>
 <td style="text-align:left;">
-Adam Hiorths vei 12A og B, 0575 Oslo
+Pilestredet 98, 0358 Oslo
 </td>
 <td style="text-align:left;">
-25.300.000
-</td>
-<td style="text-align:right;">
-5
-</td>
-<td style="text-align:left;">
-478m2
-</td>
-<td style="text-align:right;">
-</td>
-<td style="text-align:left;">
-52.928,87
-</td>
-<td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=199104309" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=199104309</a>
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-213426592
-</td>
-<td style="text-align:left;">
-Smestad/Ullern
-</td>
-<td style="text-align:left;">
-Husebyveien 14, 0377 Oslo
-</td>
-<td style="text-align:left;">
-25.000.000
+27.500.000
 </td>
 <td style="text-align:right;">
 4
 </td>
 <td style="text-align:left;">
-392m2
+357m2
 </td>
 <td style="text-align:right;">
 </td>
 <td style="text-align:left;">
-63.775,51
+77.030,81
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=213426592" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=213426592</a>
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=216421189" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=216421189</a>
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-213411627
+204966967
 </td>
 <td style="text-align:left;">
-Bekkelagshøgda / Nordstrand
+Panoramautsikt På Sørenga
 </td>
 <td style="text-align:left;">
-Utsynsveien 11 D, 1176 Oslo
+Sørengkaia 51, 0194 Oslo
 </td>
 <td style="text-align:left;">
-25.000.000
+26.900.000
 </td>
 <td style="text-align:right;">
-4
+3
 </td>
 <td style="text-align:left;">
-347m2
+143m2
 </td>
 <td style="text-align:right;">
+6
 </td>
 <td style="text-align:left;">
-72.046,11
+188.111,89
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=213411627" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=213411627</a>
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=204966967" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=204966967</a>
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-210511351
+216253630
 </td>
 <td style="text-align:left;">
-Besserud / Holmenkollen
+På Toppen Av Akersbakken
 </td>
 <td style="text-align:left;">
-Dagaliveien 39, 0783 Oslo
+Bergstien 2A, 0172 Oslo
 </td>
 <td style="text-align:left;">
-24.800.000
+24.000.000
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:left;">
+316m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+75.949,37
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=216253630" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=216253630</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215183328
+</td>
+<td style="text-align:left;">
+Frogner
+</td>
+<td style="text-align:left;">
+Bygdøy allé 61, 0265 Oslo
+</td>
+<td style="text-align:left;">
+24.000.000
 </td>
 <td style="text-align:right;">
 5
 </td>
 <td style="text-align:left;">
-318m2
+310m2
 </td>
 <td style="text-align:right;">
+3
 </td>
 <td style="text-align:left;">
-77.987,42
+77.419,35
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=210511351" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=210511351</a>
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215183328" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215183328</a>
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-189893810
+215002469
 </td>
 <td style="text-align:left;">
-Holmenkollen / Lillevann
+Sjelden Mulighet I Ullevål Hageby
 </td>
 <td style="text-align:left;">
-Lillevannsveien 88B, 0788 Oslo
+Damplassen 9, 0852 Oslo
+</td>
+<td style="text-align:left;">
+23.800.000
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:left;">
+250m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+95.200,00
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215002469" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215002469</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215668900
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+General Birchs gate 28, 0454 Oslo
 </td>
 <td style="text-align:left;">
 22.500.000
 </td>
 <td style="text-align:right;">
-4
+5
 </td>
 <td style="text-align:left;">
-260m2
+357m2
 </td>
 <td style="text-align:right;">
 </td>
 <td style="text-align:left;">
-86.538,46
+63.025,21
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=189893810" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=189893810</a>
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215668900" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215668900</a>
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-149347797
+216004773
 </td>
 <td style="text-align:left;">
-Nordberg
+Tjuvholmen
 </td>
 <td style="text-align:left;">
-Holsteinveien 3, 0874 Oslo
+Strandpromenaden 5, 0252 Oslo
+</td>
+<td style="text-align:left;">
+22.000.000
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+98m2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+224.489,80
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=216004773" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=216004773</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215055959
+</td>
+<td style="text-align:left;">
+Attraktive Smestad
+</td>
+<td style="text-align:left;">
+Sørbyhaugen 4, 0379 Oslo
+</td>
+<td style="text-align:left;">
+22.000.000
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+374m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+58.823,53
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215055959" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215055959</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215087336
+</td>
+<td style="text-align:left;">
+Berg V/Kløverparken
+</td>
+<td style="text-align:left;">
+Kløverveien 8, 0870 Oslo
 </td>
 <td style="text-align:left;">
 22.000.000
@@ -1254,15 +1423,16 @@ Holsteinveien 3, 0874 Oslo
 3
 </td>
 <td style="text-align:left;">
-203m2
+278m2
 </td>
 <td style="text-align:right;">
+4
 </td>
 <td style="text-align:left;">
-108.374,38
+79.136,69
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=149347797" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=149347797</a>
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215087336" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215087336</a>
 </td>
 </tr>
 <tr>
@@ -1296,29 +1466,115 @@ Kavringen Brygge 3, 0252 Oslo
 </tr>
 <tr>
 <td style="text-align:right;">
-210389451
+215593105
+</td>
+<td style="text-align:left;">
+Vettakollen
+</td>
+<td style="text-align:left;">
+Melkeveien 53 B, 0779 Oslo
+</td>
+<td style="text-align:left;">
+21.900.000
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+247m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+88.663,97
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215593105" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215593105</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+211735055
 </td>
 <td style="text-align:left;">
 </td>
 <td style="text-align:left;">
-Halvdan Svartes gate 42 B, 0268 Oslo
+Prestegårdsveien 3A, 0851 Oslo
 </td>
 <td style="text-align:left;">
-21.000.000
+21.650.000
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+206m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+105.097,09
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=211735055" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=211735055</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+206155977
+</td>
+<td style="text-align:left;">
+Frogner
+</td>
+<td style="text-align:left;">
+Erling Skjalgssons gate 23 A, 0267 Oslo
+</td>
+<td style="text-align:left;">
+20.500.000
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+178m2
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:left;">
+115.168,54
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=206155977" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=206155977</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+216010027
+</td>
+<td style="text-align:left;">
+Berg V/Ullevål Hageby
+</td>
+<td style="text-align:left;">
+Bergsalléen 17B, 0854 Oslo
+</td>
+<td style="text-align:left;">
+20.000.000
 </td>
 <td style="text-align:right;">
 4
 </td>
 <td style="text-align:left;">
-198m2
+154m2
 </td>
 <td style="text-align:right;">
+2
 </td>
 <td style="text-align:left;">
-106.060,61
+129.870,13
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=210389451" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=210389451</a>
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=216010027" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=216010027</a>
 </td>
 </tr>
 <tr>
@@ -1352,144 +1608,172 @@ Kaptein Oppegaards vei 8, 1164 Oslo
 </tr>
 <tr>
 <td style="text-align:right;">
-212643670
+216534399
 </td>
 <td style="text-align:left;">
+Briskeby
 </td>
 <td style="text-align:left;">
-Charlotte Andersens vei 7L, 0374 Oslo
+Industrigata 24A, 0353 Oslo
 </td>
 <td style="text-align:left;">
-20.000.000
-</td>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:left;">
-347m2
-</td>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:left;">
-57.636,89
-</td>
-<td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=212643670" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=212643670</a>
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-213391649
-</td>
-<td style="text-align:left;">
-Skøyen
-</td>
-<td style="text-align:left;">
-Heggeliveien 34D, 0375 Oslo
-</td>
-<td style="text-align:left;">
-19.900.000
-</td>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:left;">
-235m2
-</td>
-<td style="text-align:right;">
-</td>
-<td style="text-align:left;">
-84.680,85
-</td>
-<td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=213391649" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=213391649</a>
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-212520027
-</td>
-<td style="text-align:left;">
-Holmenkollen/Besserud
-</td>
-<td style="text-align:left;">
-Holmenkollveien 91B, 0784 Oslo
-</td>
-<td style="text-align:left;">
-19.500.000
+18.000.000
 </td>
 <td style="text-align:right;">
 3
 </td>
 <td style="text-align:left;">
-208m2
-</td>
-<td style="text-align:right;">
-</td>
-<td style="text-align:left;">
-93.750,00
-</td>
-<td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=212520027" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=212520027</a>
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-205523497
-</td>
-<td style="text-align:left;">
-Sjelden Mulighet På Majorstuen
-</td>
-<td style="text-align:left;">
-Rosenborggata 5, 0356 Oslo
-</td>
-<td style="text-align:left;">
-19.500.000
-</td>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:left;">
-203m2
-</td>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:left;">
-96.059,11
-</td>
-<td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=205523497" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=205523497</a>
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-212428972
-</td>
-<td style="text-align:left;">
-Sørenga
-</td>
-<td style="text-align:left;">
-Sørengkaia 41, 0194 Oslo
-</td>
-<td style="text-align:left;">
-19.000.000
+148m2
 </td>
 <td style="text-align:right;">
 3
 </td>
 <td style="text-align:left;">
-107m2
+121.621,62
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=216534399" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=216534399</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215780125
+</td>
+<td style="text-align:left;">
+Bekkelaget
+</td>
+<td style="text-align:left;">
+Granstuveien 6, 1185 Oslo
+</td>
+<td style="text-align:left;">
+18.000.000
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+238m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+75.630,25
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215780125" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215780125</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215122648
+</td>
+<td style="text-align:left;">
+Grefsen/Kjelsås
+</td>
+<td style="text-align:left;">
+Kjelsåsveien 76, 0491 Oslo
+</td>
+<td style="text-align:left;">
+18.000.000
 </td>
 <td style="text-align:right;">
 5
 </td>
 <td style="text-align:left;">
-177.570,09
+360m2
+</td>
+<td style="text-align:right;">
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=212428972" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=212428972</a>
+50.000,00
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215122648" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215122648</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+209488776
+</td>
+<td style="text-align:left;">
+Holmendammen/Slemdal
+</td>
+<td style="text-align:left;">
+Bjørnveien 85B, 0773 Oslo
+</td>
+<td style="text-align:left;">
+17.900.000
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+270m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+66.296,30
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=209488776" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=209488776</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+214833883
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Thomas Heftyes gate 46 A, 0267 Oslo
+</td>
+<td style="text-align:left;">
+17.900.000
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+200m2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+89.500,00
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=214833883" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=214833883</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215239399
+</td>
+<td style="text-align:left;">
+Frogner / Briskeby
+</td>
+<td style="text-align:left;">
+President Harbitz’ gate 27A, 0259 Oslo
+</td>
+<td style="text-align:left;">
+17.800.000
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+129m2
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:left;">
+137.984,50
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215239399" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215239399</a>
 </td>
 </tr>
 <tr>
@@ -1523,6 +1807,178 @@ Lillevannsveien 23C, 0788 Oslo
 </tr>
 <tr>
 <td style="text-align:right;">
+216233044
+</td>
+<td style="text-align:left;">
+Velkommen Til Voksenkollen.
+</td>
+<td style="text-align:left;">
+Lillevannsveien 61C, 0788 Oslo
+</td>
+<td style="text-align:left;">
+17.000.000
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+260m2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+65.384,62
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=216233044" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=216233044</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+216065168
+</td>
+<td style="text-align:left;">
+Slemdal / Vettakollen
+</td>
+<td style="text-align:left;">
+Gråkamveien 18, 0779 Oslo
+</td>
+<td style="text-align:left;">
+17.000.000
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+193m2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+88.082,90
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=216065168" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=216065168</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215696176
+</td>
+<td style="text-align:left;">
+Kjelsås/Grefsen
+</td>
+<td style="text-align:left;">
+Revefaret 9, 0491 Oslo
+</td>
+<td style="text-align:left;">
+16.900.000
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+321m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+52.647,98
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215696176" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215696176</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215789274
+</td>
+<td style="text-align:left;">
+Slemdal
+</td>
+<td style="text-align:left;">
+Bjørnveien 29B, 0774 Oslo
+</td>
+<td style="text-align:left;">
+16.900.000
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+194m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+87.113,40
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215789274" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215789274</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+147146027
+</td>
+<td style="text-align:left;">
+Frogner
+</td>
+<td style="text-align:left;">
+Drammensveien 41, 0271 Oslo
+</td>
+<td style="text-align:left;">
+16.900.000
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+149m2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+113.422,82
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=147146027" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=147146027</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+207848652
+</td>
+<td style="text-align:left;">
+Nordstrand/Sæter
+</td>
+<td style="text-align:left;">
+Ekebergveien 226C, 1162 Oslo
+</td>
+<td style="text-align:left;">
+16.800.000
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+171m2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+98.245,61
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=207848652" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=207848652</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
 209355068
 </td>
 <td style="text-align:left;">
@@ -1532,7 +1988,7 @@ Holmenkollen / Voksen
 Nils Collett Vogts vei 4, 0766 Oslo
 </td>
 <td style="text-align:left;">
-16.950.000
+16.500.000
 </td>
 <td style="text-align:right;">
 5
@@ -1544,7 +2000,7 @@ Nils Collett Vogts vei 4, 0766 Oslo
 2
 </td>
 <td style="text-align:left;">
-72.435,90
+70.512,82
 </td>
 <td style="text-align:left;">
 <a href="https://www.finn.no/realestate/homes/ad.html?finnkode=209355068" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=209355068</a>
@@ -1552,29 +2008,30 @@ Nils Collett Vogts vei 4, 0766 Oslo
 </tr>
 <tr>
 <td style="text-align:right;">
-213536427
+214023515
 </td>
 <td style="text-align:left;">
+Oppsal
 </td>
 <td style="text-align:left;">
-Hareveien 13, 0491 Oslo
+Glitreveien 6, 0686 Oslo
 </td>
 <td style="text-align:left;">
-16.200.000
+16.500.000
 </td>
 <td style="text-align:right;">
-5
+4
 </td>
 <td style="text-align:left;">
-255m2
+271m2
 </td>
 <td style="text-align:right;">
 </td>
 <td style="text-align:left;">
-63.529,41
+60.885,61
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=213536427" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=213536427</a>
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=214023515" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=214023515</a>
 </td>
 </tr>
 <tr>
@@ -1608,31 +2065,230 @@ Dronning Eufemias gate 47, 0194 Oslo
 </tr>
 <tr>
 <td style="text-align:right;">
-207453284
+216323927
 </td>
 <td style="text-align:left;">
-Holmenkollen
 </td>
 <td style="text-align:left;">
-Doktor Holms vei 11F, 0787 Oslo
+Geitmyrsveien 31 B, 0171 Oslo
 </td>
 <td style="text-align:left;">
 15.900.000
 </td>
 <td style="text-align:right;">
-5
+4
 </td>
 <td style="text-align:left;">
-211m2
+210m2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+75.714,29
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=216323927" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=216323927</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+216219793
+</td>
+<td style="text-align:left;">
+Voksenlia Med Panoramautsikt
+</td>
+<td style="text-align:left;">
+Jerpefaret 4E, 0788 Oslo
+</td>
+<td style="text-align:left;">
+15.900.000
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+274m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+58.029,20
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=216219793" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=216219793</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215642959
+</td>
+<td style="text-align:left;">
+Røakollen
+</td>
+<td style="text-align:left;">
+Aslakveien 24 C, 0753 Oslo
+</td>
+<td style="text-align:left;">
+15.800.000
 </td>
 <td style="text-align:right;">
 3
 </td>
 <td style="text-align:left;">
-75.355,45
+117m2
+</td>
+<td style="text-align:right;">
+10
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=207453284" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=207453284</a>
+135.042,74
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215642959" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215642959</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+214334465
+</td>
+<td style="text-align:left;">
+Brannfjell / Ekeberg
+</td>
+<td style="text-align:left;">
+Brannfjellveien 88 A, 1181 Oslo
+</td>
+<td style="text-align:left;">
+15.800.000
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:left;">
+328m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+48.170,73
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=214334465" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=214334465</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215481092
+</td>
+<td style="text-align:left;">
+Heggeli / Skøyen
+</td>
+<td style="text-align:left;">
+Konventveien 22A, 0377 Oslo
+</td>
+<td style="text-align:left;">
+15.700.000
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+161m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+97.515,53
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215481092" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215481092</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+213322629
+</td>
+<td style="text-align:left;">
+Tåsen
+</td>
+<td style="text-align:left;">
+Tåsen terrasse 4B, 0873 Oslo
+</td>
+<td style="text-align:left;">
+15.600.000
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+183m2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+85.245,90
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=213322629" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=213322629</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+216051729
+</td>
+<td style="text-align:left;">
+Frogner/Uranienborg
+</td>
+<td style="text-align:left;">
+Niels Juels gate 66, 0259 Oslo
+</td>
+<td style="text-align:left;">
+15.500.000
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+142m2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+109.154,93
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=216051729" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=216051729</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215539290
+</td>
+<td style="text-align:left;">
+Frogner
+</td>
+<td style="text-align:left;">
+Mogens Thorsens gate 7, 0264 Oslo
+</td>
+<td style="text-align:left;">
+15.500.000
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+118m2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+131.355,93
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215539290" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215539290</a>
 </td>
 </tr>
 <tr>
@@ -1646,7 +2302,7 @@ Frogner
 Bygdøy allé 25A, 0262 Oslo
 </td>
 <td style="text-align:left;">
-15.800.000
+15.500.000
 </td>
 <td style="text-align:right;">
 2
@@ -1658,39 +2314,10 @@ Bygdøy allé 25A, 0262 Oslo
 4
 </td>
 <td style="text-align:left;">
-105.333,33
+103.333,33
 </td>
 <td style="text-align:left;">
 <a href="https://www.finn.no/realestate/homes/ad.html?finnkode=211583922" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=211583922</a>
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-212970985
-</td>
-<td style="text-align:left;">
-Sentralt På Frogner
-</td>
-<td style="text-align:left;">
-Tidemands gate 4, 0266 Oslo
-</td>
-<td style="text-align:left;">
-15.500.000
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-140m2
-</td>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:left;">
-110.714,29
-</td>
-<td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=212970985" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=212970985</a>
 </td>
 </tr>
 <tr>
@@ -1723,31 +2350,175 @@ Ekebergveien 189C, 1177 Oslo
 </tr>
 <tr>
 <td style="text-align:right;">
-212823214
+209638615
 </td>
 <td style="text-align:left;">
-Vinderen / Volvat
+Frogner
 </td>
 <td style="text-align:left;">
-Diakonveien 7, 0370 Oslo
+Elisenbergveien 5, 0265 Oslo
 </td>
 <td style="text-align:left;">
-14.900.000
+15.500.000
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+150m2
 </td>
 <td style="text-align:right;">
 2
 </td>
 <td style="text-align:left;">
-143m2
+103.333,33
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=209638615" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=209638615</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+199047092
+</td>
+<td style="text-align:left;">
+Holmendammen
+</td>
+<td style="text-align:left;">
+Holmenkollveien 26 A, 0376 Oslo
+</td>
+<td style="text-align:left;">
+15.500.000
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+387m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+40.051,68
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=199047092" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=199047092</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+216183741
+</td>
+<td style="text-align:left;">
+St.hanshaugen
+</td>
+<td style="text-align:left;">
+Schwensens gate 10A, 0170 Oslo
+</td>
+<td style="text-align:left;">
+15.000.000
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+146m2
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+102.739,73
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=216183741" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=216183741</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215656999
+</td>
+<td style="text-align:left;">
+Frogner
+</td>
+<td style="text-align:left;">
+Skovveien 5, 0257 Oslo
+</td>
+<td style="text-align:left;">
+15.000.000
 </td>
 <td style="text-align:right;">
 2
 </td>
 <td style="text-align:left;">
-104.195,80
+155m2
+</td>
+<td style="text-align:right;">
+2
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=212823214" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=212823214</a>
+96.774,19
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215656999" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215656999</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215890306
+</td>
+<td style="text-align:left;">
+Kjelsås
+</td>
+<td style="text-align:left;">
+Midtoddveien 27, 0494 Oslo
+</td>
+<td style="text-align:left;">
+15.000.000
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+227m2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+66.079,30
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215890306" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215890306</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+196448611
+</td>
+<td style="text-align:left;">
+Valkyrien Living/Majorstuen
+</td>
+<td style="text-align:left;">
+Ole Vigs gate 24D, 0366 Oslo
+</td>
+<td style="text-align:left;">
+14.950.000
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+102m2
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+146.568,63
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=196448611" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=196448611</a>
 </td>
 </tr>
 <tr>
@@ -1755,7 +2526,7 @@ Diakonveien 7, 0370 Oslo
 210173598
 </td>
 <td style="text-align:left;">
-Barcode | The Carve
+Bjørvika- Barcode | The Carve
 </td>
 <td style="text-align:left;">
 Rostockgata 7, 0191 Oslo
@@ -1781,59 +2552,171 @@ Rostockgata 7, 0191 Oslo
 </tr>
 <tr>
 <td style="text-align:right;">
-213019252
+215986245
 </td>
 <td style="text-align:left;">
+Heggeli/Frognerparken
 </td>
 <td style="text-align:left;">
-Hegdehaugsveien 15, 0352 Oslo
-</td>
-<td style="text-align:left;">
-14.790.000
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-152m2
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-97.302,63
-</td>
-<td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=213019252" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=213019252</a>
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-213180719
-</td>
-<td style="text-align:left;">
-Oscars Gate/Frogner
-</td>
-<td style="text-align:left;">
-Oscars gate 67A, 0256 Oslo
+Skøyenveien 1G, 0375 Oslo
 </td>
 <td style="text-align:left;">
 14.750.000
 </td>
 <td style="text-align:right;">
-3
+4
 </td>
 <td style="text-align:left;">
-143m2
+151m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+97.682,12
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215986245" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215986245</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215154577
+</td>
+<td style="text-align:left;">
+Slemdal/Vettakollen
+</td>
+<td style="text-align:left;">
+Skådalsveien 12 A, 0781 Oslo
+</td>
+<td style="text-align:left;">
+14.750.000
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+158m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+93.354,43
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215154577" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215154577</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+208554329
+</td>
+<td style="text-align:left;">
+Ullern
+</td>
+<td style="text-align:left;">
+Ullernveien 35B, 0280 Oslo
+</td>
+<td style="text-align:left;">
+14.600.000
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+279m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+52.329,75
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=208554329" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=208554329</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215511809
+</td>
+<td style="text-align:left;">
+Muligens Bislett’s Flotteste Leilighet!
+</td>
+<td style="text-align:left;">
+Colletts gate 9B, 0169 Oslo
+</td>
+<td style="text-align:left;">
+14.500.000
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+157m2
 </td>
 <td style="text-align:right;">
 5
 </td>
 <td style="text-align:left;">
-103.146,85
+92.356,69
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=213180719" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=213180719</a>
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215511809" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215511809</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215319248
+</td>
+<td style="text-align:left;">
+Grefsen
+</td>
+<td style="text-align:left;">
+Lindeallèen 17 a, 0487 Oslo
+</td>
+<td style="text-align:left;">
+14.500.000
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:left;">
+204m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+71.078,43
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215319248" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215319248</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215162010
+</td>
+<td style="text-align:left;">
+Fredfullt På Nordberg
+</td>
+<td style="text-align:left;">
+Kongleveien 26A, 0860 Oslo
+</td>
+<td style="text-align:left;">
+14.500.000
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+180m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+80.555,56
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215162010" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215162010</a>
 </td>
 </tr>
 <tr>
@@ -1847,7 +2730,7 @@ Holmenkollen / Besserud
 Holmenkollveien 97A, 0784 Oslo
 </td>
 <td style="text-align:left;">
-14.650.000
+14.350.000
 </td>
 <td style="text-align:right;">
 3
@@ -1859,7 +2742,7 @@ Holmenkollveien 97A, 0784 Oslo
 3
 </td>
 <td style="text-align:left;">
-82.768,36
+81.073,45
 </td>
 <td style="text-align:left;">
 <a href="https://www.finn.no/realestate/homes/ad.html?finnkode=193529386" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=193529386</a>
@@ -1867,15 +2750,101 @@ Holmenkollveien 97A, 0784 Oslo
 </tr>
 <tr>
 <td style="text-align:right;">
-211264916
+214830609
 </td>
 <td style="text-align:left;">
+Tåsen
+</td>
+<td style="text-align:left;">
+Blåsbortveien 2B, 0873 Oslo
+</td>
+<td style="text-align:left;">
+14.300.000
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+151m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+94.701,99
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=214830609" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=214830609</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+214892784
+</td>
+<td style="text-align:left;">
+Majorstuen / Fagerborg
+</td>
+<td style="text-align:left;">
+Suhms gate 3 B, 0362 Oslo
+</td>
+<td style="text-align:left;">
+14.200.000
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+135m2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+105.185,19
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=214892784" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=214892784</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+206550845
+</td>
+<td style="text-align:left;">
+Nordstrand
+</td>
+<td style="text-align:left;">
+Frostveien 4, 1164 Oslo
+</td>
+<td style="text-align:left;">
+13.950.000
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:left;">
+0m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+Inf
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=206550845" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=206550845</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215921855
+</td>
+<td style="text-align:left;">
+Vinderen/ Borgen: I Herskaplig Villa
 </td>
 <td style="text-align:left;">
 Tuengen allé 31, 0374 Oslo
 </td>
 <td style="text-align:left;">
-14.500.000
+13.900.000
 </td>
 <td style="text-align:right;">
 3
@@ -1887,107 +2856,21 @@ Tuengen allé 31, 0374 Oslo
 2
 </td>
 <td style="text-align:left;">
-87.878,79
+84.242,42
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=211264916" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=211264916</a>
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215921855" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215921855</a>
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-204131016
+216564320
 </td>
 <td style="text-align:left;">
-Uranienborg/Frogner
+Sjelden Mulighet I Skøyen Terrasse
 </td>
 <td style="text-align:left;">
-Skovveien 26, 0257 Oslo
-</td>
-<td style="text-align:left;">
-14.500.000
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-175m2
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-82.857,14
-</td>
-<td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=204131016" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=204131016</a>
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-181101368
-</td>
-<td style="text-align:left;">
-Sørenga
-</td>
-<td style="text-align:left;">
-Sørengkaia 120, 0194 Oslo
-</td>
-<td style="text-align:left;">
-14.500.000
-</td>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:left;">
-114m2
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-127.192,98
-</td>
-<td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=181101368" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=181101368</a>
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-209194325
-</td>
-<td style="text-align:left;">
-Ullern / Bestum
-</td>
-<td style="text-align:left;">
-Vækerø terrasse 11B, 0282 Oslo
-</td>
-<td style="text-align:left;">
-14.000.000
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-182m2
-</td>
-<td style="text-align:right;">
-</td>
-<td style="text-align:left;">
-76.923,08
-</td>
-<td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=209194325" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=209194325</a>
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-191600090
-</td>
-<td style="text-align:left;">
-Valleløkken
-</td>
-<td style="text-align:left;">
-Ullevålsveien 58A, 0454 Oslo
+Skøyen terrasse 39, 0276 Oslo
 </td>
 <td style="text-align:left;">
 13.900.000
@@ -1996,56 +2879,167 @@ Ullevålsveien 58A, 0454 Oslo
 3
 </td>
 <td style="text-align:left;">
-158m2
+117m2
 </td>
 <td style="text-align:right;">
 4
 </td>
 <td style="text-align:left;">
-87.974,68
+118.803,42
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=191600090" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=191600090</a>
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=216564320" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=216564320</a>
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-213313830
+215053120
 </td>
 <td style="text-align:left;">
-Sentralt På Frogner
 </td>
 <td style="text-align:left;">
-Mogens Thorsens gate 4 B, 0264 Oslo
+Frognerveien 1b, 0257 Oslo
 </td>
 <td style="text-align:left;">
 13.900.000
 </td>
 <td style="text-align:right;">
-2
+3
 </td>
 <td style="text-align:left;">
-115m2
+173m2
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+80.346,82
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215053120" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215053120</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+209676938
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Bekkefaret 10B, 0280 Oslo
+</td>
+<td style="text-align:left;">
+13.750.000
 </td>
 <td style="text-align:right;">
 3
 </td>
 <td style="text-align:left;">
-120.869,57
+211m2
+</td>
+<td style="text-align:right;">
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=213313830" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=213313830</a>
+65.165,88
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=209676938" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=209676938</a>
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-213548099
+216016883
 </td>
 <td style="text-align:left;">
-Nordstrand
+Sogn / Nordberg
 </td>
 <td style="text-align:left;">
-Tyslevveien 45 C, 1163 Oslo
+LERSOLVEIEN 5 B, 0876 Oslo
+</td>
+<td style="text-align:left;">
+13.500.000
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+172m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+78.488,37
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=216016883" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=216016883</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+216225261
+</td>
+<td style="text-align:left;">
+Frogner
+</td>
+<td style="text-align:left;">
+Professor Dahls gate 48, 0260 Oslo
+</td>
+<td style="text-align:left;">
+13.500.000
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+90m2
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+150.000,00
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=216225261" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=216225261</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+216136686
+</td>
+<td style="text-align:left;">
+Voksenlia/Holmenkollen
+</td>
+<td style="text-align:left;">
+Jerpefaret 8D, 0788 Oslo
+</td>
+<td style="text-align:left;">
+13.500.000
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+232m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+58.189,66
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=216136686" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=216136686</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215766109
+</td>
+<td style="text-align:left;">
+Idylliske Iladalen
+</td>
+<td style="text-align:left;">
+Kingos gate 17, 0457 Oslo
 </td>
 <td style="text-align:left;">
 13.500.000
@@ -2054,26 +3048,113 @@ Tyslevveien 45 C, 1163 Oslo
 3
 </td>
 <td style="text-align:left;">
-216m2
+123m2
 </td>
 <td style="text-align:right;">
+7
 </td>
 <td style="text-align:left;">
-62.500,00
+109.756,10
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=213548099" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=213548099</a>
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215766109" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215766109</a>
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-212172289
+215797623
 </td>
 <td style="text-align:left;">
-Frogner/Uranienborg
+Majorstuen
 </td>
 <td style="text-align:left;">
-Camilla Colletts vei 12A, 0258 Oslo
+Åsaveien 10, 0362 Oslo
+</td>
+<td style="text-align:left;">
+13.500.000
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+153m2
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+88.235,29
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215797623" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215797623</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215721840
+</td>
+<td style="text-align:left;">
+Kjelsås
+</td>
+<td style="text-align:left;">
+Kjelsåsveien 103D, 0491 Oslo
+</td>
+<td style="text-align:left;">
+13.500.000
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+212m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+63.679,25
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215721840" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215721840</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215572587
+</td>
+<td style="text-align:left;">
+Løren Ved Vinslottet
+</td>
+<td style="text-align:left;">
+Bøkkerveien 40 A, 0579 Oslo
+</td>
+<td style="text-align:left;">
+13.500.000
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+118m2
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+114.406,78
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215572587" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215572587</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+214762145
+</td>
+<td style="text-align:left;">
+Velkommen Til Frogner
+</td>
+<td style="text-align:left;">
+Kirkeveien 21 (inngang fra Munthes gate), 0255 Oslo
 </td>
 <td style="text-align:left;">
 13.500.000
@@ -2082,16 +3163,129 @@ Camilla Colletts vei 12A, 0258 Oslo
 2
 </td>
 <td style="text-align:left;">
-151m2
+106m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+127.358,49
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=214762145" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=214762145</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+210274465
+</td>
+<td style="text-align:left;">
+Besserud/Holmenkollen
+</td>
+<td style="text-align:left;">
+Setra vei 7 A, 0786 Oslo
+</td>
+<td style="text-align:left;">
+13.450.000
 </td>
 <td style="text-align:right;">
 3
 </td>
 <td style="text-align:left;">
-89.403,97
+193m2
+</td>
+<td style="text-align:right;">
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=212172289" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=212172289</a>
+69.689,12
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=210274465" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=210274465</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+203689864
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+Thomas Heftyes gate 60A, 0267 Oslo
+</td>
+<td style="text-align:left;">
+13.400.000
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+144m2
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+93.055,56
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=203689864" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=203689864</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+214694744
+</td>
+<td style="text-align:left;">
+Vestkanttorget - V/Frognerparken -
+</td>
+<td style="text-align:left;">
+Jacob Aalls gate 3 A, 0368 Oslo
+</td>
+<td style="text-align:left;">
+13.300.000
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+150m2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+88.666,67
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=214694744" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=214694744</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+216542000
+</td>
+<td style="text-align:left;">
+Holmenkollen
+</td>
+<td style="text-align:left;">
+Lillevannsveien 6, 0788 Oslo
+</td>
+<td style="text-align:left;">
+13.250.000
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+225m2
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+58.888,89
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=216542000" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=216542000</a>
 </td>
 </tr>
 <tr>
@@ -2124,41 +3318,70 @@ Damfaret 24, 0671 Oslo
 </tr>
 <tr>
 <td style="text-align:right;">
-211503275
+216055341
 </td>
 <td style="text-align:left;">
-Homansbyen - Parkveien
+Holmenkollen
 </td>
 <td style="text-align:left;">
-Parkveien 15B, 0350 Oslo
+Harestien 1, 0788 Oslo
 </td>
 <td style="text-align:left;">
-13.200.000
-</td>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:left;">
-145m2
+13.000.000
 </td>
 <td style="text-align:right;">
 3
 </td>
 <td style="text-align:left;">
-91.034,48
+200m2
+</td>
+<td style="text-align:right;">
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=211503275" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=211503275</a>
+65.000,00
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=216055341" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=216055341</a>
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-213547346
+215959195
 </td>
 <td style="text-align:left;">
+Frogner
 </td>
 <td style="text-align:left;">
-Nils Collett Vogts Vei 45 A, 0766 Oslo
+Løvenskiolds gate 8, 0263 Oslo
+</td>
+<td style="text-align:left;">
+13.000.000
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+156m2
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+83.333,33
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215959195" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215959195</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215666842
+</td>
+<td style="text-align:left;">
+Årvoll
+</td>
+<td style="text-align:left;">
+Østreheimsveien 2B, 0590 Oslo
 </td>
 <td style="text-align:left;">
 13.000.000
@@ -2167,15 +3390,45 @@ Nils Collett Vogts Vei 45 A, 0766 Oslo
 4
 </td>
 <td style="text-align:left;">
-228m2
+248m2
 </td>
 <td style="text-align:right;">
+2
 </td>
 <td style="text-align:left;">
-57.017,54
+52.419,35
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=213547346" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=213547346</a>
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215666842" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215666842</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215193190
+</td>
+<td style="text-align:left;">
+Frogner
+</td>
+<td style="text-align:left;">
+Balchens gate 5, 0265 Oslo
+</td>
+<td style="text-align:left;">
+13.000.000
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+101m2
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+128.712,87
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215193190" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215193190</a>
 </td>
 </tr>
 <tr>
@@ -2207,169 +3460,343 @@ Dovresvingen 10C, 1184 Oslo
 </tr>
 <tr>
 <td style="text-align:right;">
-212142505
+215385475
 </td>
 <td style="text-align:left;">
+Bak Slottet
 </td>
 <td style="text-align:left;">
-Frognerseterveien 43A, 0776 Oslo
-</td>
-<td style="text-align:left;">
-12.900.000
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-159m2
-</td>
-<td style="text-align:right;">
-</td>
-<td style="text-align:left;">
-81.132,08
-</td>
-<td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=212142505" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=212142505</a>
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-213262618
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-Solveien 42F, 1177 Oslo
+Inkognitogata 2B, 0258 Oslo
 </td>
 <td style="text-align:left;">
 12.900.000
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+136m2
 </td>
 <td style="text-align:right;">
 4
 </td>
 <td style="text-align:left;">
-170m2
+94.852,94
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215385475" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215385475</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+210241288
+</td>
+<td style="text-align:left;">
+Gråkammen / Slemdal
+</td>
+<td style="text-align:left;">
+Tennisveien 37, 0777 Oslo
+</td>
+<td style="text-align:left;">
+12.900.000
 </td>
 <td style="text-align:right;">
 3
 </td>
 <td style="text-align:left;">
-75.882,35
+168m2
+</td>
+<td style="text-align:right;">
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=213262618" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=213262618</a>
+76.785,71
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=210241288" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=210241288</a>
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-213563575
+215332835
 </td>
 <td style="text-align:left;">
-Bislett
+Slemdal / Gråkammen
 </td>
 <td style="text-align:left;">
-Falbes gate 18C, 0170 Oslo
+Gråkamveien 8B, 0779 Oslo
 </td>
 <td style="text-align:left;">
-12.800.000
+12.900.000
 </td>
 <td style="text-align:right;">
 3
 </td>
 <td style="text-align:left;">
-115m2
+121m2
 </td>
 <td style="text-align:right;">
-7
+4
 </td>
 <td style="text-align:left;">
-111.304,35
+106.611,57
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=213563575" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=213563575</a>
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215332835" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215332835</a>
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-212493710
+215197788
 </td>
 <td style="text-align:left;">
+Nordberg - Rett Ved Solvang Kolonihager
 </td>
 <td style="text-align:left;">
-Vækerøveien 179C, 0751 Oslo
+John Brandts vei 97, 0860 Oslo
 </td>
 <td style="text-align:left;">
-12.700.000
+12.600.000
 </td>
 <td style="text-align:right;">
 3
 </td>
 <td style="text-align:left;">
-178m2
+126m2
 </td>
 <td style="text-align:right;">
 </td>
 <td style="text-align:left;">
-71.348,31
+100.000,00
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=212493710" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=212493710</a>
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215197788" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215197788</a>
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-213184087
+211496995
 </td>
 <td style="text-align:left;">
-Fasjonabelt På Frogner/ Skarpsno
+Bestum/Lilleaker
 </td>
 <td style="text-align:left;">
-Magnus Barfots gate 5D, 0273 Oslo
+Vækerø Terrasse 8, 0282 Oslo
 </td>
 <td style="text-align:left;">
 12.500.000
 </td>
 <td style="text-align:right;">
-3
+4
 </td>
 <td style="text-align:left;">
-113m2
+161m2
 </td>
 <td style="text-align:right;">
 </td>
 <td style="text-align:left;">
-110.619,47
+77.639,75
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=213184087" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=213184087</a>
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=211496995" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=211496995</a>
 </td>
 </tr>
 <tr>
 <td style="text-align:right;">
-212079343
+216108980
 </td>
 <td style="text-align:left;">
 Nordstrand
 </td>
 <td style="text-align:left;">
-Ekebergveien 320, 1166 Oslo
+Bernt Knudsens vei 57D, 1163 Oslo
 </td>
 <td style="text-align:left;">
 12.500.000
 </td>
 <td style="text-align:right;">
-1
+3
 </td>
 <td style="text-align:left;">
-179m2
+226m2
 </td>
 <td style="text-align:right;">
 </td>
 <td style="text-align:left;">
-69.832,40
+55.309,73
 </td>
 <td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=212079343" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=212079343</a>
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=216108980" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=216108980</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+216077486
+</td>
+<td style="text-align:left;">
+Karlsrud
+</td>
+<td style="text-align:left;">
+Steinliveien 18 A, 1185 Oslo
+</td>
+<td style="text-align:left;">
+12.500.000
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+184m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+67.934,78
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=216077486" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=216077486</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215512394
+</td>
+<td style="text-align:left;">
+Vinderen
+</td>
+<td style="text-align:left;">
+Ris Skolevei 25 E, 0373 Oslo
+</td>
+<td style="text-align:left;">
+12.500.000
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+136m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+91.911,76
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215512394" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215512394</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215185830
+</td>
+<td style="text-align:left;">
+Bolteløkka
+</td>
+<td style="text-align:left;">
+Johannes Bruns gate 12C, 0452 Oslo
+</td>
+<td style="text-align:left;">
+12.500.000
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+116m2
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:left;">
+107.758,62
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215185830" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215185830</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+215185307
+</td>
+<td style="text-align:left;">
+Refstad
+</td>
+<td style="text-align:left;">
+Liljeveien 19, 0586 Oslo
+</td>
+<td style="text-align:left;">
+12.500.000
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+315m2
+</td>
+<td style="text-align:right;">
+</td>
+<td style="text-align:left;">
+39.682,54
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=215185307" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=215185307</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+214757696
+</td>
+<td style="text-align:left;">
+Sjelden Mulighet På St. Hanshaugen
+</td>
+<td style="text-align:left;">
+Bergstien 8A, 0172 Oslo
+</td>
+<td style="text-align:left;">
+12.500.000
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+120m2
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+104.166,67
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=214757696" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=214757696</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+214647296
+</td>
+<td style="text-align:left;">
+Bislett
+</td>
+<td style="text-align:left;">
+Thereses gate 22, 0168 Oslo
+</td>
+<td style="text-align:left;">
+12.500.000
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+113m2
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+110.619,47
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=214647296" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=214647296</a>
 </td>
 </tr>
 <tr>
@@ -2403,6 +3830,35 @@ Ullernåsen
 </tr>
 <tr>
 <td style="text-align:right;">
+210131666
+</td>
+<td style="text-align:left;">
+Holtet / Nordstrand
+</td>
+<td style="text-align:left;">
+Kongsveien 83 A-C (leil. A11), 1177 Oslo
+</td>
+<td style="text-align:left;">
+12.400.000
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+93m2
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+133.333,33
+</td>
+<td style="text-align:left;">
+<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=210131666" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=210131666</a>
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
 211300624
 </td>
 <td style="text-align:left;">
@@ -2428,35 +3884,6 @@ Ullern allé 67, 0381 Oslo
 </td>
 <td style="text-align:left;">
 <a href="https://www.finn.no/realestate/homes/ad.html?finnkode=211300624" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=211300624</a>
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-212408805
-</td>
-<td style="text-align:left;">
-Majorstuen
-</td>
-<td style="text-align:left;">
-Jacob Aalls gate 26, 0368 Oslo
-</td>
-<td style="text-align:left;">
-12.200.000
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-139m2
-</td>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:left;">
-87.769,78
-</td>
-<td style="text-align:left;">
-<a href="https://www.finn.no/realestate/homes/ad.html?finnkode=212408805" class="uri">https://www.finn.no/realestate/homes/ad.html?finnkode=212408805</a>
 </td>
 </tr>
 </tbody>
@@ -2641,7 +4068,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>

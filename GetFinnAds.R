@@ -4,6 +4,7 @@
 
 library(tidyverse)
 library(rvest)
+library(tidygeocoder)
 
 #-- Load data ------------------------
 
@@ -28,9 +29,8 @@ n_ads_per_page <- read_html(list_url) %>%
 
 n_pages <- ceiling(n_ads / n_ads_per_page)
 
-#-- Scrape individual ad function ------------------------
+#-- Define function to scrape individual ads ------------------------
 
-# Define scrape function
 scrape_ad <- function(ad_url, verbose = TRUE, new_building = FALSE) {
   
   url_text <- read_html(ad_url)
@@ -39,11 +39,8 @@ scrape_ad <- function(ad_url, verbose = TRUE, new_building = FALSE) {
   # Get location
   loc <- url_text %>% 
     html_nodes(".u-t3.u-display-block") %>% 
-    html_text()
-  
-  if (is_empty(loc)) {
-    loc <- ""
-  }
+    html_text() %>% 
+    ifelse(is_empty(.), NA, .)
   
   # Get title
   title <- url_text %>% 
@@ -72,7 +69,11 @@ scrape_ad <- function(ad_url, verbose = TRUE, new_building = FALSE) {
     html_text() %>% 
     str_squish()
   
-  last_name <- which(info_name == "Formuesverdi")
+  last_name <- which(info_name %in% c("Formuesverdi","Fellesformue",
+                                      "Boligselgerforsikring","Tomteareal","Bruttoareal",
+                                      "Byggeår","Energimerking",
+                                      "Rom","Tomt","Verditakst"))
+  last_name <- max(last_name)
   
   info_num <- url_text %>% 
     html_nodes("dd") %>% 
@@ -122,22 +123,23 @@ scrape_ad <- function(ad_url, verbose = TRUE, new_building = FALSE) {
   # Collect all data in a data frame
   data_out <- tibble(
     new_building = new_building,
-    location = loc,
+    location = str_to_title(loc),
     address = address,
     price = price,
     title = title,
-    facilities = facilities,
+    facilities = ifelse(!is_empty(facilities),facilities,NA),
     description_text = description_text,
     date_changed = date_changed,
     ad_url = ad_url,
     id = ad_id) %>% 
     bind_cols(descriptive_wide) %>% 
-    janitor::clean_names()
+    janitor::clean_names() %>% 
+    geocode(address, method = 'osm')
   
   if (verbose) {
-    print(glue::glue("{data_out %>% pull(location)}, \\
+    print(str_glue("{data_out %>% pull(location)}, \\
                {data_out %>% pull(bruksareal)}m2, \\
-               {format(data_out %>% pull(price), big.mark=\",\")} kr"))
+               {format(data_out %>% pull(price), big.mark=\".\", decimal.mark=\",\")} kr"))
   }
   
   return(data_out)
@@ -150,9 +152,9 @@ ids <- c()
 
 for (page in seq(n_pages)) {
   
-  print(glue::glue("Scraping ads for page {page}"))
+  print(str_glue("Scraping ads for page {page}"))
   
-  new_url <- str_replace(list_url, pattern = "page=1", replacement = glue::glue("page={page}"))
+  new_url <- str_replace(list_url, pattern = "page=1", replacement = str_glue("page={page}"))
   
   ad_id <- read_html(new_url) %>% 
     html_nodes(".ads__unit") %>% 
@@ -165,7 +167,7 @@ for (page in seq(n_pages)) {
   ids <- c(ids, ad_id)
   ids <- unique(ids)
   
-  print(glue::glue("Number of ads scraped: {length(ids)}"))
+  print(str_glue("Number of ads scraped: {length(ids)}"))
   
 }
 
@@ -176,10 +178,10 @@ data <- tibble()
 for (i in ids) {
   
   idx <- which(ids == i)
-  print(glue::glue("Scraping data for id {i} ({round(idx * 100 / length(ids),2)}%)"))
+  print(str_glue("Scraping data for id {i} ({round(idx * 100 / length(ids),2)}%)"))
+  ad_url <- str_glue("https://www.finn.no/realestate/homes/ad.html?finnkode={i}")
   try(
-    ad_data <- scrape_ad(ad_url = glue::glue("https://www.finn.no/realestate/homes/ad.html?finnkode={i}"),
-                         verbose = FALSE, new_building = FALSE)
+    ad_data <- scrape_ad(ad_url = ad_url, verbose = FALSE, new_building = FALSE)
   )
   
   data <- bind_rows(data, ad_data) %>% 
@@ -187,12 +189,12 @@ for (i in ids) {
   
 }
 
-#map_dfr(ids, ~ scrape_ad(ad_url = glue::glue("https://www.finn.no/realestate/homes/ad.html?finnkode={.x}"),
+#map_dfr(ids, ~ scrape_ad(ad_url = str_glue("https://www.finn.no/realestate/homes/ad.html?finnkode={.x}"),
 #        verbose = TRUE, new_building = FALSE))
 
 #-- Write to file ------------------------
 
-write_csv(data, here::here("files", glue::glue("housing_listings_{Sys.Date()}.csv")))
+write_csv(data, here::here("files", str_glue("housing_listings_{Sys.Date()}.csv")))
 
 
 
